@@ -39,6 +39,15 @@ resource "azurerm_resource_group" "example" {
   location = var.location
 }
 
+resource "random_string" "uniqstr" {
+  length  = 6
+  special = false
+  upper   = false
+  keepers = {
+    resource_group_name = azurerm_resource_group.example.name
+  }
+}
+
 #################
 # VNET
 #################
@@ -83,10 +92,22 @@ resource "azurerm_subnet_route_table_association" "example" {
 }
 
 #################
+# Log Analytics
+#################
+module "la" {
+  source              = "../modules/log_analytics"
+  name                = "la-aksdemo${random_string.uniqstr.result}"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku                 = null
+  retention           = null
+}
+
+#################
 # Windows VM
 #################
 module "windows" {
-  source              = "../modules/vm-windows"
+  source              = "../modules/vm-windows-2019"
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   name                = "VM"
