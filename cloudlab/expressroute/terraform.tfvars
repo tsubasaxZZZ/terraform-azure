@@ -1,0 +1,12 @@
+resource_group_name = "rg-cloudlab202102"
+location = "japaneast"
+vnet_name = "vnet-cloudlab"
+ip_range = ["10.1.0.0/16"]
+ip_subnet_gw = ["10.1.255.0/24"]
+subnet_name_gw = "GatewaySubnet"
+exrcircuit_name = "er-attokyo"
+exrcircuit_provider = "AtTokyo"
+exrcircuit_location = "Tokyo2"
+exrcircuit_bandwidth = "50"
+exrcircuit_sku_tier = "Premium"
+exrcircuit_sku_family = "MeteredData"
