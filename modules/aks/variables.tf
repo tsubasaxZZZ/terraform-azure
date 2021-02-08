@@ -91,3 +91,10 @@ variable "addons" {
     azure_policy         = bool
   })
 }
+
+variable "ssh_key" {
+  
+}
+variable "admin_username" {
+  
+}

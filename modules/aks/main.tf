@@ -1,18 +1,3 @@
-terraform {
-  required_version = "~> 0.14.3"
-  required_providers {
-    azurerm = {
-      version = "=2.40.0"
-    }
-  }
-
-}
-
-provider "azurerm" {
-  features {}
-}
-
-
 #####################
 # Resources section #
 #####################
@@ -57,7 +42,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   role_based_access_control {
     enabled = true
-/*
+    /*
     azure_active_directory {
       managed = true
       admin_group_object_ids = [
@@ -84,10 +69,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku  = "standard"
     outbound_type      = "loadBalancer"
     network_plugin     = "azure"
-    network_policy     = "calico"
+    network_policy     = "azure"
     dns_service_ip     = "192.168.0.10"
     docker_bridge_cidr = "172.17.0.1/16"
     service_cidr       = "192.168.0.0/16"
+  }
+
+  linux_profile {
+    admin_username = var.admin_username
+    ssh_key {
+      key_data = var.ssh_key
+    }
   }
 }
 
