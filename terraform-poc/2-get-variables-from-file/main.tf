@@ -14,6 +14,6 @@ output "condition" {
   value = contains(local.enableAcceleratedNetworking, var.vm_sku)
 }
 
-output "variables-from-file" {
+output "variables_from_file" {
   value = local.enableAcceleratedNetworking
 }
