@@ -1,4 +1,4 @@
-variable "vm-sku" {
+variable "vm_sku" {
   default = "Standard_D2_v2"
 }
 
@@ -11,7 +11,7 @@ data "template_file" "example" {
 }
 
 output "condition" {
-  value = contains(local.enableAcceleratedNetworking, var.vm-sku)
+  value = contains(local.enableAcceleratedNetworking, var.vm_sku)
 }
 
 output "variables-from-file" {
