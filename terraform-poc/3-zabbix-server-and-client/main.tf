@@ -50,8 +50,8 @@ resource "azurerm_subnet" "subnet_default" {
 }
 resource "azurerm_network_security_group" "example" {
   name                = "nsg-zabbix"
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
 }
 resource "azurerm_network_security_rule" "nsg-rule" {
   name                        = "remote_access"
@@ -108,7 +108,7 @@ module "zabbix_client" {
   subnet_id           = azurerm_subnet.subnet_default.id
   zone                = (count.index % 3) + 1
   source_image_id     = data.azurerm_image.zabbix_client.id
-  custom_data =<<EOF
+  custom_data         = <<EOF
 #!/bin/bash
 sudo sed -i.org s/REPLACE_ZABBIX_SERVER_IP/${module.zabbix_server.private_ip_address}/g /etc/zabbix/zabbix_agentd.conf
 sudo sed -i.org2 s/REPLACE_ZABBIX_CLIENT_HOSTNAME/$(uname -n)/g /etc/zabbix/zabbix_agentd.conf
