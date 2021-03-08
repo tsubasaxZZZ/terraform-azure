@@ -6,13 +6,17 @@ Zabbix サーバーとクライアントの一式が出来上がります。
 
 ## Packer
 
+- ファイル
+    - zabbix-server.pkr.hcl
+
 Packer を使って Azure 上にイメージを作成します。Zabbix サーバーがインストールされたイメージ、監視対象として Zabbix エージェントがインストールされたイメージが作成されます。
 
 リソース グループやリージョンは適宜変更します。
 
 ## Ansible
 
-`playbook` ディレクトリ配下に Zabbix サーバー、MySQLサーバー、エージェントをインストールするためのファイルが一式入っています。
+- ファイル
+    - playbook ディレクトリ配下
 
 Ansible の実行例:
 ```
@@ -20,6 +24,11 @@ ansible-playbook playbook/install-zabbix-server.yaml -i playbook/inventory/produ
 ```
 
 ## Terraform
+
+- ファイル
+    - main.tf
+    - terraform.tfvars
+    - modules
 
 Azure 上への仮想マシンの展開と起動後の Zabbix エージェントの設定ファイルの変更を行います。Packer によって展開されたイメージを基に作成します。
 
