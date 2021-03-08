@@ -1,0 +1,5 @@
+zabbix_setup:
+  - db_password: "zabbix"
+    db_username: "zabbix"
+    snmptrap_community: "public"
+    zabbix_server_ip: "REPLACE_ZABBIX_SERVER_IP"

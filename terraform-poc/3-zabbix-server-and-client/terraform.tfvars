@@ -1,0 +1,5 @@
+ssh_key_path = "~/.ssh/id_rsa.pub"
+custom_image_resource_group_name = "rg-iacpoc"
+zabbix_server_custom_image_name = "UbuntuServer-zabbix-server"
+zabbix_client_custom_image_name = "UbuntuServer-zabbix-client"
+location = "japaneast"

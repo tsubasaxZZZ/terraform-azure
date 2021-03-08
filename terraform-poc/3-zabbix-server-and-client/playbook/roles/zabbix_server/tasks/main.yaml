@@ -1,0 +1,55 @@
+- name: Install zabbix repository information
+  apt:
+    update_cache: true
+    deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+bionic_all.deb
+    state: present
+
+- name: Install Zabbix-server
+  apt:
+    force_apt_get: yes
+    state: present
+    update_cache: true
+    pkg:
+    - zabbix-server-mysql
+    - zabbix-frontend-php
+    - zabbix-apache-conf
+    - zabbix-agent
+
+- name: template zabbix.conf.php
+  template: >
+    src=zabbix.conf.php.j2
+    dest=/etc/zabbix/web/zabbix.conf.php
+    owner=root
+    group=root
+    mode=0644
+  with_items: "{{ zabbix_setup }}"
+
+- name: varliable zabbix user count
+  shell: mysql -u root -ss zabbix -e "select count(*) from users"
+  ignore_errors: yes
+  register: count_users
+- name: insert zabbix DB
+  shell: "zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql zabbix -uzabbix -pzabbix"
+  when: count_users.rc != 0
+
+- name: modify DBPassword
+  lineinfile: >-
+    dest='/etc/zabbix/zabbix_server.conf'
+    state=present
+    backrefs=yes
+    regexp='DBPassword=$'
+    line="DBPassword={{ item.db_password }}"
+  with_items: "{{ zabbix_setup }}"
+  notify:
+    - restart zabbix-server
+
+- name: modify Timezone
+  lineinfile: >-
+    dest='/etc/zabbix/apache.conf'
+    state=present
+    backrefs=yes
+    regexp='# php_value date.timezone Europe/Riga'
+    line=" php_value date.timezone Asia/Tokyo"
+  with_items: "{{ zabbix_setup }}"
+  notify:
+    - restart apache2

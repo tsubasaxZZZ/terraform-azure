@@ -1,0 +1,29 @@
+- name: Install MySQL
+  apt:
+    #force_apt_get: yes
+    state: present
+    update_cache: true
+    name:
+      - mysql-server-5.7
+      - mysql-client-5.7
+      - python-mysqldb
+
+- name: Create zabbix db
+  community.mysql.mysql_db:
+    name: zabbix
+    state: present
+    encoding: utf8
+    collation: utf8_bin
+
+
+- name: Set root-user password
+  community.mysql.mysql_user:
+    login_user: "root"
+    #    login_password: "{{ admin_user_password }}"
+    name: "{{ item.db_username }}"
+    password: "{{ item.db_password }}"
+    priv: 'zabbix.*:ALL,GRANT'
+    check_implicit_admin: yes
+    state: present
+  with_items:
+    - "{{ zabbix_setup }}"

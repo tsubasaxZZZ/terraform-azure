@@ -1,0 +1,23 @@
+- name: Install zabbix repository information
+  apt:
+    update_cache: true
+    deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+bionic_all.deb
+    state: present
+
+- name: Install Zabbix-agent
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+    - zabbix-agent
+
+- name: modify zabbix_agentd config
+  template: >
+    src=zabbix_agentd.conf.j2
+    dest='/etc/zabbix/zabbix_agentd.conf'
+    owner=root
+    group=root
+    mode=0644
+  with_items: "{{ zabbix_setup }}"
+  notify:
+    - restart zabbix-agent
