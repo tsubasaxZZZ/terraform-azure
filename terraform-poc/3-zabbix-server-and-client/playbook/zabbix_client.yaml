@@ -1,0 +1,5 @@
+- hosts: zabbix_clients
+  become: true
+  roles:
+    - common
+    - zabbix_client

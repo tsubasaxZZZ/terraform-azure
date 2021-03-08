@@ -4,8 +4,3 @@
     - common
     - mysql_server
     - zabbix_server
-- hosts: zabbix_clients
-  become: true
-  roles:
-    - common
-    - zabbix_client

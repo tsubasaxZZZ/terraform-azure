@@ -1,5 +1,5 @@
 [zabbix_servers]
-20.188.121.163
+20.78.224.7
 
 [zabbix_servers:vars]
 ansible_port=22
@@ -7,7 +7,9 @@ ansible_user=tsunomur
 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 [zabbix_clients]
-20.188.121.157
+20.78.224.70
+20.78.224.42
+20.78.224.43
 
 [zabbix_clients:vars]
 ansible_port=22

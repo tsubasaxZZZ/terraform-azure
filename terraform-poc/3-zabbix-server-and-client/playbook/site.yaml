@@ -1,0 +1,2 @@
+- include: zabbix_server.yaml
+- include: zabbix_client.yaml
