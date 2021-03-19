@@ -64,10 +64,12 @@ resource "azurerm_subnet" "subnet-aks" {
 ###################
 # VM
 ###################
+/*
 data "azurerm_ssh_public_key" "example" {
   name                = var.ssh_public_key_name
   resource_group_name = var.ssh_public_key_resource_group
 }
+*/
 module "linux-vm" {
   source              = "../modules/vm-linux"
   admin_username      = "tsunomur"
