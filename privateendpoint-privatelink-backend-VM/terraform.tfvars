@@ -1,0 +1,5 @@
+resource_group_name = "rg-nri-petest"
+source_address_prefix_for_nsg = "217.178.150.76"
+location = "japaneast"
+ssh_key_path = "~/.ssh/id_rsa.pub"
+admin_username = "tsunomur"

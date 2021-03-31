@@ -11,3 +11,12 @@ variable "vm_size" {
 }
 variable "subnet_id" {}
 variable "custom_data" {}
+variable "source_address_prefix" {
+  default = "*"
+}
+variable "private_ip_address_allocation" {
+  default = "Dynamic"
+}
+variable "private_ip_address" {
+  default = null
+}

@@ -13,7 +13,7 @@ resource "azurerm_linux_virtual_machine" "linux" {
   size                = var.vm_size
   zone                = var.zone
   admin_username      = var.admin_username
-  
+
   disable_password_authentication = true
 
   network_interface_ids = [
@@ -47,8 +47,9 @@ resource "azurerm_network_interface" "nic" {
   ip_configuration {
     name                          = "configuration"
     subnet_id                     = var.subnet_id
-    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pip.id
+    private_ip_address_allocation = var.private_ip_address_allocation
+    private_ip_address            = var.private_ip_address_allocation == "Dynamic" ? null : var.private_ip_address
   }
 }
 
@@ -65,7 +66,7 @@ resource "azurerm_network_security_rule" "nsg-rule" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_ranges     = ["22", "80"]
-  source_address_prefix       = "*"
+  source_address_prefix       = var.source_address_prefix
   destination_address_prefix  = "*"
   resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg.name
