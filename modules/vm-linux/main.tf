@@ -26,10 +26,10 @@ resource "azurerm_linux_virtual_machine" "linux" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    publisher = var.source_image_reference.publisher
+    offer     = var.source_image_reference.offer
+    sku       = var.source_image_reference.sku
+    version   = var.source_image_reference.version
   }
 
   admin_ssh_key {
@@ -71,10 +71,12 @@ resource "azurerm_network_security_rule" "nsg-rule" {
   resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
+/*
 resource "azurerm_subnet_network_security_group_association" "nsg-assosiation" {
   subnet_id                 = var.subnet_id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
+*/
 
 resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.nic.id

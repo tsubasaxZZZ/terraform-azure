@@ -1,0 +1,12 @@
+resource_group_name = "rg-nri-petest-d2sv4"
+source_address_prefix_for_nsg = "217.178.150.76"
+location = "japaneast"
+ssh_key_path = "~/.ssh/id_rsa.pub"
+admin_username = "tsunomur"
+vm_source_image_reference = {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "8.2"
+    version   = "latest"
+}
+vm_size = "Standard_D2s_v4"

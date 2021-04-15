@@ -20,3 +20,18 @@ variable "private_ip_address_allocation" {
 variable "private_ip_address" {
   default = null
 }
+variable "source_image_reference" {
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+
+  default = {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+}
