@@ -103,18 +103,27 @@ resource "azurerm_function_app" "example" {
   os_type                    = "linux"
   version                    = "~3"
   app_settings = {
-    FUNCTIONS_EXTENSION_VERSION           = "~3"
+    FUNCTIONS_EXTENSION_VERSION = "~3"
     #WEBSITE_RUN_FROM_PACKAGE              = "1"
     FUNCTIONS_WORKER_RUNTIME              = "python"
     APPINSIGHTS_INSTRUMENTATIONKEY        = "${azurerm_application_insights.example.instrumentation_key}"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.example.connection_string}"
+    SQL_SERVER                            = "${azurerm_sql_server.sqlserver.fully_qualified_domain_name}"
+    SQL_DATABASE                          = "${azurerm_sql_database.sqldb.name}"
+    SQL_USERNAME                          = "${var.sqldb_admin}"
+    SQL_PASSWORD                          = "${var.sqldb_password}"
+    EVENTHUB                              = "${azurerm_eventhub_namespace.example.default_primary_connection_string}"
+    FUNCTIONS_WORKER_PROCESS_COUNT        = 10
+    PYTHON_THREADPOOL_THREAD_COUNT        = 1
   }
 
+  /*
   lifecycle {
     ignore_changes = [
-      app_settings, 
+      app_settings,
     ]
   }
+  */
   site_config {
     linux_fx_version = "Python|3.8"
     ftps_state       = "Disabled"
@@ -139,6 +148,21 @@ resource "azurerm_sql_database" "sqldb" {
   server_name                      = azurerm_sql_server.sqlserver.name
   edition                          = var.sqldb_edition
   requested_service_objective_name = var.sqldb_service
+}
+
+resource "azurerm_sql_firewall_rule" "frommicrosoft" {
+  name                = "FirewallRule1"
+  resource_group_name = azurerm_resource_group.resource.name
+  server_name         = azurerm_sql_server.sqlserver.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+resource "azurerm_sql_firewall_rule" "fromclient" {
+  name                = "FirewallRule2"
+  resource_group_name = azurerm_resource_group.resource.name
+  server_name         = azurerm_sql_server.sqlserver.name
+  start_ip_address    = var.connection_from_ipaddress
+  end_ip_address      = var.connection_from_ipaddress
 }
 
 #################
