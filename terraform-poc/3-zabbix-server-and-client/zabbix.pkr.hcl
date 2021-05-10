@@ -28,7 +28,7 @@ source "azure-arm" "zabbix-client" {
 build {
   sources = ["sources.azure-arm.zabbix-server"]
   provisioner "ansible" {
-    playbook_file       = "./playbook/install-zabbix.yaml"
+    playbook_file       = "./playbook/site.yaml"
     galaxy_file         = "./playbook/requirements.yaml"
     groups              = ["zabbix_servers"]
   }
@@ -44,7 +44,7 @@ build {
 build {
   sources = ["sources.azure-arm.zabbix-client"]
   provisioner "ansible" {
-    playbook_file       = "./playbook/install-zabbix.yaml"
+    playbook_file       = "./playbook/site.yaml"
     galaxy_file         = "./playbook/requirements.yaml"
     groups              = ["zabbix_clients"]
   }

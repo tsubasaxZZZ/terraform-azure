@@ -13,6 +13,11 @@ Packer を使って Azure 上にイメージを作成します。Zabbix サー�
 
 リソース グループやリージョンは適宜変更します。
 
+実行方法:
+```
+packer build zabbix.pkr.hcl
+```
+
 ## Ansible
 
 - ファイル
