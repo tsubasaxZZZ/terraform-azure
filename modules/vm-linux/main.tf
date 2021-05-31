@@ -40,9 +40,10 @@ resource "azurerm_linux_virtual_machine" "linux" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "nic-${var.name}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  name                          = "nic-${var.name}"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  enable_accelerated_networking = var.enable_accelerated_networking
 
   ip_configuration {
     name                          = "configuration"

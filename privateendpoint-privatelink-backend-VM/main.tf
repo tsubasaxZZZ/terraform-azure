@@ -10,13 +10,22 @@ variable "ssh_key_path" {
 variable "admin_username" {
 }
 variable "vm_source_image_reference" {
+  default = {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
 }
 variable "vm_size" {
   default = "Standard_B2ms"
 }
+variable "vm_enable_accelerated_networking" {
+  default = false
+}
 
 terraform {
-  required_version = "=> 0.14.9"
+  required_version = ">= 0.14.9"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -71,18 +80,19 @@ resource "azurerm_subnet" "fe_pe" {
 
 // VM
 module "frontend_vm" {
-  source                 = "../modules/vm-linux"
-  admin_username         = var.admin_username
-  public_key             = file(var.ssh_key_path)
-  name                   = "privateendpoint-bastion-vm"
-  resource_group_name    = azurerm_resource_group.example.name
-  location               = azurerm_resource_group.example.location
-  subnet_id              = azurerm_subnet.fe_bastion.id
-  source_address_prefix  = var.source_address_prefix_for_nsg
-  zone                   = 1
-  source_image_reference = var.vm_source_image_reference
-  vm_size                = var.vm_size
-  custom_data            = <<EOF
+  source                        = "../modules/vm-linux"
+  admin_username                = var.admin_username
+  public_key                    = file(var.ssh_key_path)
+  name                          = "privateendpoint-bastion-vm"
+  resource_group_name           = azurerm_resource_group.example.name
+  location                      = azurerm_resource_group.example.location
+  subnet_id                     = azurerm_subnet.fe_bastion.id
+  source_address_prefix         = var.source_address_prefix_for_nsg
+  zone                          = 1
+  source_image_reference        = var.vm_source_image_reference
+  vm_size                       = var.vm_size
+  enable_accelerated_networking = var.vm_enable_accelerated_networking
+  custom_data                   = <<EOF
 #!/bin/bash
 sudo apt-get update
 sudo apt-get install -y \
@@ -216,6 +226,7 @@ module "api_vm" {
   zone                          = 1
   source_image_reference        = var.vm_source_image_reference
   vm_size                       = var.vm_size
+  enable_accelerated_networking = var.vm_enable_accelerated_networking
   custom_data                   = <<EOF
 #!/bin/bash
 sudo apt-get update

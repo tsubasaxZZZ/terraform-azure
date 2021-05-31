@@ -35,3 +35,7 @@ variable "source_image_reference" {
     version   = "latest"
   }
 }
+variable "enable_accelerated_networking" {
+  type = bool
+  default = false
+}
