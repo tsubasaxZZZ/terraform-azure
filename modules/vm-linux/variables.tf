@@ -4,7 +4,7 @@ variable "resource_group_name" {}
 variable "location" {}
 variable "name" {}
 variable "zone" {
-  default = 1
+  default = null
 }
 variable "vm_size" {
   default = "Standard_B2ms"
@@ -36,6 +36,10 @@ variable "source_image_reference" {
   }
 }
 variable "enable_accelerated_networking" {
-  type = bool
+  type    = bool
   default = false
+}
+
+variable "availability_set_id" {
+  default = null
 }
