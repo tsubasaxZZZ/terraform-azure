@@ -32,5 +32,5 @@ terraform plan -out tfplan -var-file ../terraform.tfvars
 ```
 
 # 関連 Issue
-https://github.com/hashicorp/terraform-provider-azurerm/pull/12566
-https://github.com/hashicorp/terraform-provider-azurerm/issues/12021
+- https://github.com/hashicorp/terraform-provider-azurerm/pull/12566
+- https://github.com/hashicorp/terraform-provider-azurerm/issues/12021
