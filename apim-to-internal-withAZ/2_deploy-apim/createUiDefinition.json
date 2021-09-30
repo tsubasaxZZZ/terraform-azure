@@ -107,8 +107,8 @@
                         "name": "vnet",
                         "type": "Microsoft.Network.VirtualNetworkCombo",
                         "label": {
-                            "virtualNetwork": "仮想ネットワーク",
-                            "subnets": "サブネット"
+                            "virtualNetwork": "既存の仮想ネットワーク",
+                            "subnets": "既存のサブネット"
                         },
                         "toolTip": {
                             "virtualNetwork": "",
@@ -122,7 +122,7 @@
                         },
                         "subnets": {
                             "subnet1": {
-                                "label": "Subnet name",
+                                "label": "既存のサブネット",
                                 "constraints": {
                                     "minAddressPrefixSize": "/24",
                                     "minAddressCount": 0,
@@ -136,8 +136,8 @@
                         "name": "pip",
                         "type": "Microsoft.Network.PublicIpAddressCombo",
                         "label": {
-                            "publicIpAddress": "Public IP address",
-                            "domainNameLabel": "Domain name label"
+                            "publicIpAddress": "既存の パブリック IP アドレス",
+                            "domainNameLabel": "既存の ドメイン名ラベル"
                         },
                         "toolTip": {
                             "publicIpAddress": "",
