@@ -22,12 +22,19 @@
         ],
         "basics": [
             {
-                "name": "infoBox1",
-                "type": "Microsoft.Common.InfoBox",
+                "name": "textBlock1",
+                "type": "Microsoft.Common.TextBlock",
                 "visible": true,
                 "options": {
-                    "icon": "None",
                     "text": "✔ リージョンはリソース グループと同一リージョン、SKU は Premium、ゾーン数は 3 で展開されます。"
+                }
+            },
+            {
+                "name": "textBlock2",
+                "type": "Microsoft.Common.TextBlock",
+                "visible": true,
+                "options": {
+                    "text": "✔ 仮想ネットワーク、サブネット、パブリック IP アドレス、NSG は予め展開しておく必要があります。このウィザードで新規に作成すると展開時にエラーになります。"
                 }
             },
             {
@@ -96,15 +103,6 @@
                 "name": "networkSettings",
                 "label": "ネットワークの選択",
                 "elements": [
-                    {
-                        "name": "infoBox2",
-                        "type": "Microsoft.Common.InfoBox",
-                        "visible": true,
-                        "options": {
-                            "icon": "None",
-                            "text": "✔ 仮想ネットワーク、サブネット、パブリック IP アドレス、NSG は予め展開しておく必要があります。このウィザードで新規に作成すると展開時にエラーになります。"
-                        }
-                    },
                     {
                         "name": "vnet",
                         "type": "Microsoft.Network.VirtualNetworkCombo",
