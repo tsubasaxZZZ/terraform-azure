@@ -43,7 +43,7 @@
                 "label": "API Management のリソース名",
                 "defaultValue": "",
                 "toolTip": "",
-                "placeholder": "",
+                "placeholder": "apim-example",
                 "multiLine": false,
                 "constraints": {
                     "required": true,
@@ -62,7 +62,7 @@
                 "label": "パブリッシャーのメールアドレス",
                 "defaultValue": "",
                 "toolTip": "",
-                "placeholder": "",
+                "placeholder": "apim@example.com",
                 "multiLine": false,
                 "constraints": {
                     "required": true
@@ -111,8 +111,8 @@
                             "subnets": "既存のサブネット"
                         },
                         "toolTip": {
-                            "virtualNetwork": "",
-                            "subnets": ""
+                            "virtualNetwork": "既存の仮想ネットワークを選択します。",
+                            "subnets": "既存のサブネットを選択します。NSG を割り当てておく必要があります。"
                         },
                         "constraints": {
                             "minAddressPrefixSize": "/24"
