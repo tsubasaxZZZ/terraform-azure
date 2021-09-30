@@ -7,7 +7,7 @@
             "steps": [
                 {
                     "name": "basics",
-                    "label": "Setup APIM",
+                    "label": "基本情報の設定",
                     "description": "APIM の展開",
                     "elements": [
                         {
