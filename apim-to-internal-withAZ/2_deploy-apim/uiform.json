@@ -22,7 +22,6 @@
                                 "text": "✔ リージョンはリソース グループと同一リージョン、SKU は Premium、ゾーン数は 3 で展開されます。"
                             }
                         },
-                        /*
                         {
                             "name": "textBlock2",
                             "type": "Microsoft.Common.TextBlock",
@@ -91,10 +90,8 @@
                             },
                             "visible": true
                         }
-                        */
                     ]
                 },
-                /*
                 {
                     "name": "networkSettings",
                     "label": "ネットワークの選択",
@@ -154,27 +151,24 @@
                         }
                     ]
                 }
-                */
-            ],
-            "outputs": {
-                "parameters": {
-                    /*
-                    "apimName": "[steps('basics').txtApimName]",
-                    "publisherEmail": "[steps('basics').txtPublisherEmail]",
-                    "publisherName": "[steps('basics').txtPublisherName]",
-                    "sku": "Premium",
-                    "skuCount": "[steps.('basics').numUnitCount]",
-                    "virtualNetworkName": "[steps('networkSettings').vnet.name]",
-                    "subnetName": "[steps('networkSettings').vnet.subnets.subnet1.name]",
-                    "location": "[steps('basics').resourceScope.location.name]",
-                    "availabilityZones": "[\"1\",\"2\",\"3\"]",
-                    "publicIpAddressId": "[concat(subscription().id, '/resourceGroups/', steps('basics').resourceScope.resourceGroup.name, '/providers/Microsoft.Network/publicIPAddresses/', steps('networkSettings').pip.name)]"
-                    */
-                },
-                "kind" : "ResourceGroup",
-                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
-                "location": "[steps('basics').resourceScope.location.name]"
-            }
+            ]
+        },
+        "outputs": {
+            "parameters": {
+                "apimName": "[steps('basics').txtApimName]",
+                "publisherEmail": "[steps('basics').txtPublisherEmail]",
+                "publisherName": "[steps('basics').txtPublisherName]",
+                "sku": "Premium",
+                "skuCount": "[steps('basics').numUnitCount]",
+                "virtualNetworkName": "[steps('networkSettings').vnet.name]",
+                "subnetName": "[steps('networkSettings').vnet.subnets.subnet1.name]",
+                "location": "[steps('basics').resourceScope.location.name]",
+                "availabilityZones": "[\"1\",\"2\",\"3\"]",
+                "publicIpAddressId": "[concat(steps('basics').resourceScope.subscription.id, '/resourceGroups/', steps('basics').resourceScope.resourceGroup.name, '/providers/Microsoft.Network/publicIPAddresses/', steps('networkSettings').pip.name)]"
+            },
+            "kind": "ResourceGroup",
+            "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
+            "location": "[steps('basics').resourceScope.location.name]"
         }
     }
 }
