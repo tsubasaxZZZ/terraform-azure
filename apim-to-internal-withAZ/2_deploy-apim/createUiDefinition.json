@@ -1,0 +1,164 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": false,
+            "basics": {
+                "description": "API Management を展開します。",
+                "subscription": {
+                    "resourceProviders": [
+                        "Microsoft.ApiManagement"
+                    ]
+                },
+                "location": {
+                    "visible": true
+                }
+            }
+        },
+        "resourceTypes": [
+            "Microsoft.ApiManagement/service"
+        ],
+        "basics": [{
+                "name": "infoBox1",
+                "type": "Microsoft.Common.InfoBox",
+                "visible": true,
+                "options": {
+                    "icon": "None",
+                    "text": "✔ リージョンはリソース グループと同一リージョン、SKU は Premium、ゾーン数は 3 で展開されます。"
+                }
+            },
+            {
+                "name": "txtApimName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "API Management のリソース名",
+                "defaultValue": "",
+                "toolTip": "",
+                "placeholder": "",
+                "multiLine": false,
+                "constraints": {
+                    "required": true,
+                    "validations": [{
+                        "regex": "^[a-z]+[a-z0-9A-Z-]{0,48}[a-z0-9A-Z]$",
+                        "message": "先頭はアルファベットで始め、それ以降は数字もしくはアルファベットで50文字以内にします。"
+                    }]
+                },
+                "visible": true
+            },
+            {
+                "name": "txtPublisherEmail",
+                "type": "Microsoft.Common.TextBox",
+                "label": "パブリッシャーのメールアドレス",
+                "defaultValue": "",
+                "toolTip": "",
+                "placeholder": "",
+                "multiLine": false,
+                "constraints": {
+                    "required": true
+                },
+                "visible": true
+            },
+            {
+                "name": "txtPublisherName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "パブリッシャーの名前",
+                "defaultValue": "",
+                "toolTip": "",
+                "placeholder": "",
+                "multiLine": false,
+                "constraints": {
+                    "required": true
+                },
+                "visible": true
+            },
+            {
+                "name": "numUnitCount",
+                "type": "Microsoft.Common.Slider",
+                "min": 3,
+                "max": 10,
+                "label": "ユニット数",
+                "subLabel": "",
+                "defaultValue": 3,
+                "showStepMarkers": true,
+                "toolTip": "",
+                "constraints": {
+                    "required": true
+                },
+                "visible": true
+            }
+        ],
+        "steps": [{
+            "name": "networkSettings",
+            "label": "ネットワークの選択",
+            "elements": [{
+                    "name": "vnet",
+                    "type": "Microsoft.Network.VirtualNetworkCombo",
+                    "label": {
+                        "virtualNetwork": "仮想ネットワーク",
+                        "subnets": "サブネット"
+                    },
+                    "toolTip": {
+                        "virtualNetwork": "",
+                        "subnets": ""
+                    },
+
+                    "constraints": {
+                        "minAddressPrefixSize": "/24"
+                    },
+                    "options": {
+                        "hideExisting": false
+                    },
+                    "subnets": {
+                        "subnet1": {
+                            "label": "Subnet name",
+                            "constraints": {
+                                "minAddressPrefixSize": "/24",
+                                "minAddressCount": 0,
+                                "requireContiguousAddresses": false
+                            }
+                        }
+                    },
+                    "visible": true
+                },
+                {
+                    "name": "pip",
+                    "type": "Microsoft.Network.PublicIpAddressCombo",
+                    "label": {
+                        "publicIpAddress": "Public IP address",
+                        "domainNameLabel": "Domain name label"
+                    },
+                    "toolTip": {
+                        "publicIpAddress": "",
+                        "domainNameLabel": ""
+                    },
+
+                    "constraints": {
+                        "required": {
+                            "domainNameLabel": true
+                        }
+                    },
+                    "options": {
+                        "hideNone": false,
+                        "hideDomainNameLabel": false,
+                        "hideExisting": false,
+                        "zone": 3
+                    },
+                    "visible": true
+                }
+            ]
+        }],
+        "outputs": {
+            "apimName": "[basics('txtApimName')]",
+            "publisherEmail": "[basics('txtPublisherEmail')]",
+            "publisherName": "[basics('txtPublisherName')]",
+            "sku": "Premium",
+            "skuCount": "[basics('numUnitCount')]",
+            "virtualNetworkName": "[steps('networkSettings').vnet.name]",
+            "subnetName": "[steps('networkSettings').vnet.subnets.subnet1.name]",
+            "location": "[location()]",
+            "availabilityZones": "[\"1\",\"2\",\"3\"]",
+            "publicIpAddressId": "[concat(subscription().id, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', steps('networkSettings').pip.name)]"
+        }
+    }
+}

@@ -9,6 +9,9 @@ variable "vnet_name" {
 variable "pip_name_for_apim" {
   
 }
+variable "apim_name" {
+  
+}
 variable "apim_zones" {
   
 }

@@ -22,6 +22,9 @@ resource "azurerm_resource_group_template_deployment" "example" {
   resource_group_name = var.resource_group_name
   deployment_mode     = "Incremental"
   parameters_content = jsonencode({
+    "apimName" = {
+      "value" = var.apim_name
+    },
     "publisherEmail" = {
       value = "apim@example.com"
     },

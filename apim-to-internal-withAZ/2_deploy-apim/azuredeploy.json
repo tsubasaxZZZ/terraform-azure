@@ -2,6 +2,10 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "apimName" : {
+      "type": "string",
+      "minLength": 1
+    },
     "publisherEmail": {
       "type": "string",
       "minLength": 1,
@@ -71,7 +75,7 @@
     }
   },
   "variables": {
-    "apiManagementServiceName": "[concat('apiservice', uniqueString(resourceGroup().id))]",
+    "apiManagementServiceName": "[parameters('apimName')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
   },
   "resources": [
