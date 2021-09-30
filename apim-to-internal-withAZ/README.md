@@ -32,16 +32,26 @@ cd 2_deploy-vnet
 terraform plan -out tfplan -var-file ../terraform.tfvars
 ```
 
+### UI 定義
 こちらの UI 定義を使用して展開することもできます。
 
-createUiDefnition.json
+#### 方法1. マネージド アプリケーションの UI 定義を使用(createUiDefnition.json)
+
+- ドキュメント
+    - https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/managed-applications/create-uidefinition-overview
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2FcreateUiDefinition.json)
 
 
-uiForm.json
+#### 方法2. uiForm.json
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2Fazuredeploy.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2Fuiform.json)
+
+### テンプレートスペックへの登録
+
+```sh
+az ts create --name apimWithAz --resource-group rg-apim --template-file azuredeploy.json --version 1.0 --ui-form-definition uiform.json
+```
 
 # 関連 Issue
 - https://github.com/hashicorp/terraform-provider-azurerm/pull/12566
