@@ -31,15 +31,6 @@
                 }
             },
             {
-                "name": "infoBox2",
-                "type": "Microsoft.Common.InfoBox",
-                "visible": true,
-                "options": {
-                    "icon": "None",
-                    "text": "✔ 仮想ネットワーク、サブネット、パブリック IP アドレス、NSG は予め展開しておく必要があります。このウィザードで新規に作成すると展開時にエラーになります。"
-                }
-            },
-            {
                 "name": "txtApimName",
                 "type": "Microsoft.Common.TextBox",
                 "label": "API Management のリソース名",
@@ -49,10 +40,12 @@
                 "multiLine": false,
                 "constraints": {
                     "required": true,
-                    "validations": [{
-                        "regex": "^[a-z]+[a-z0-9A-Z-]{0,48}[a-z0-9A-Z]$",
-                        "message": "先頭はアルファベットで始め、それ以降は数字もしくはアルファベットで50文字以内にします。"
-                    }]
+                    "validations": [
+                        {
+                            "regex": "^[a-z]+[a-z0-9A-Z-]{0,48}[a-z0-9A-Z]$",
+                            "message": "先頭はアルファベットで始め、それ以降は数字もしくはアルファベットで50文字以内にします。"
+                        }
+                    ]
                 },
                 "visible": true
             },
@@ -98,66 +91,76 @@
                 "visible": true
             }
         ],
-        "steps": [{
-            "name": "networkSettings",
-            "label": "ネットワークの選択",
-            "elements": [{
-                    "name": "vnet",
-                    "type": "Microsoft.Network.VirtualNetworkCombo",
-                    "label": {
-                        "virtualNetwork": "仮想ネットワーク",
-                        "subnets": "サブネット"
+        "steps": [
+            {
+                "name": "networkSettings",
+                "label": "ネットワークの選択",
+                "elements": [
+                    {
+                        "name": "infoBox2",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "None",
+                            "text": "✔ 仮想ネットワーク、サブネット、パブリック IP アドレス、NSG は予め展開しておく必要があります。このウィザードで新規に作成すると展開時にエラーになります。"
+                        }
                     },
-                    "toolTip": {
-                        "virtualNetwork": "",
-                        "subnets": ""
-                    },
-
-                    "constraints": {
-                        "minAddressPrefixSize": "/24"
-                    },
-                    "options": {
-                        "hideExisting": false
-                    },
-                    "subnets": {
-                        "subnet1": {
-                            "label": "Subnet name",
-                            "constraints": {
-                                "minAddressPrefixSize": "/24",
-                                "minAddressCount": 0,
-                                "requireContiguousAddresses": false
+                    {
+                        "name": "vnet",
+                        "type": "Microsoft.Network.VirtualNetworkCombo",
+                        "label": {
+                            "virtualNetwork": "仮想ネットワーク",
+                            "subnets": "サブネット"
+                        },
+                        "toolTip": {
+                            "virtualNetwork": "",
+                            "subnets": ""
+                        },
+                        "constraints": {
+                            "minAddressPrefixSize": "/24"
+                        },
+                        "options": {
+                            "hideExisting": false
+                        },
+                        "subnets": {
+                            "subnet1": {
+                                "label": "Subnet name",
+                                "constraints": {
+                                    "minAddressPrefixSize": "/24",
+                                    "minAddressCount": 0,
+                                    "requireContiguousAddresses": false
+                                }
                             }
-                        }
+                        },
+                        "visible": true
                     },
-                    "visible": true
-                },
-                {
-                    "name": "pip",
-                    "type": "Microsoft.Network.PublicIpAddressCombo",
-                    "label": {
-                        "publicIpAddress": "Public IP address",
-                        "domainNameLabel": "Domain name label"
-                    },
-                    "toolTip": {
-                        "publicIpAddress": "",
-                        "domainNameLabel": ""
-                    },
-
-                    "constraints": {
-                        "required": {
-                            "domainNameLabel": true
-                        }
-                    },
-                    "options": {
-                        "hideNone": false,
-                        "hideDomainNameLabel": false,
-                        "hideExisting": false,
-                        "zone": 3
-                    },
-                    "visible": true
-                }
-            ]
-        }],
+                    {
+                        "name": "pip",
+                        "type": "Microsoft.Network.PublicIpAddressCombo",
+                        "label": {
+                            "publicIpAddress": "Public IP address",
+                            "domainNameLabel": "Domain name label"
+                        },
+                        "toolTip": {
+                            "publicIpAddress": "",
+                            "domainNameLabel": ""
+                        },
+                        "constraints": {
+                            "required": {
+                                "domainNameLabel": true
+                            }
+                        },
+                        "options": {
+                            "hideNone": false,
+                            "hideDomainNameLabel": false,
+                            "hideExisting": false,
+                            "zone": 3
+                        },
+                        "visible": true
+                    }
+                ]
+            }
+        ],
         "outputs": {
             "apimName": "[basics('txtApimName')]",
             "publisherEmail": "[basics('txtPublisherEmail')]",
