@@ -1,0 +1,174 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
+    "view": {
+        "kind": "Form",
+        "properties": {
+            "title": "内部ネットワークでゾーン冗長の API Management を展開する",
+            "steps": [
+                {
+                    "name": "basics",
+                    "label": "Setup APIM",
+                    "description": "APIM の展開",
+                    "elements": [
+                        {
+                            "name": "resourceScope",
+                            "type": "Microsoft.Common.ResourceScope"
+                        },
+                        {
+                            "name": "textBlock1",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "✔ リージョンはリソース グループと同一リージョン、SKU は Premium、ゾーン数は 3 で展開されます。"
+                            }
+                        },
+                        {
+                            "name": "textBlock2",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "✔ 仮想ネットワーク、サブネット、パブリック IP アドレス、NSG は予め展開しておく必要があります。このウィザードで新規に作成すると展開時にエラーになります。"
+                            }
+                        },
+                        {
+                            "name": "txtApimName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "API Management のリソース名",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "placeholder": "apim-example",
+                            "multiLine": false,
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^[a-z]+[a-z0-9A-Z-]{0,48}[a-z0-9A-Z]$",
+                                        "message": "先頭はアルファベットで始め、それ以降は数字もしくはアルファベットで50文字以内にします。"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "txtPublisherEmail",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "パブリッシャーのメールアドレス",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "placeholder": "apim@example.com",
+                            "multiLine": false,
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "txtPublisherName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "パブリッシャーの名前",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "placeholder": "",
+                            "multiLine": false,
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "numUnitCount",
+                            "type": "Microsoft.Common.Slider",
+                            "min": 3,
+                            "max": 10,
+                            "label": "ユニット数",
+                            "subLabel": "",
+                            "defaultValue": 3,
+                            "showStepMarkers": true,
+                            "toolTip": "",
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": true
+                        }
+                    ]
+                },
+                {
+                    "name": "networkSettings",
+                    "label": "ネットワークの選択",
+                    "elements": [
+                        {
+                            "name": "vnet",
+                            "type": "Microsoft.Network.VirtualNetworkCombo",
+                            "label": {
+                                "virtualNetwork": "既存の仮想ネットワーク",
+                                "subnets": "既存のサブネット"
+                            },
+                            "toolTip": {
+                                "virtualNetwork": "既存の仮想ネットワークを選択します。",
+                                "subnets": "既存のサブネットを選択します。NSG を割り当てておく必要があります。"
+                            },
+                            "constraints": {
+                                "minAddressPrefixSize": "/24"
+                            },
+                            "options": {
+                                "hideExisting": false
+                            },
+                            "subnets": {
+                                "subnet1": {
+                                    "label": "既存のサブネット",
+                                    "constraints": {
+                                        "minAddressPrefixSize": "/24",
+                                        "minAddressCount": 0,
+                                        "requireContiguousAddresses": false
+                                    }
+                                }
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "pip",
+                            "type": "Microsoft.Network.PublicIpAddressCombo",
+                            "label": {
+                                "publicIpAddress": "既存の パブリック IP アドレス",
+                                "domainNameLabel": "既存の ドメイン名ラベル"
+                            },
+                            "toolTip": {
+                                "publicIpAddress": "",
+                                "domainNameLabel": ""
+                            },
+                            "constraints": {
+                                "required": {
+                                    "domainNameLabel": true
+                                }
+                            },
+                            "options": {
+                                "hideNone": false,
+                                "hideDomainNameLabel": false,
+                                "hideExisting": false,
+                                "zone": 3
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            ],
+            "outputs": {
+                "parameters": {
+                    "apimName": "[steps('basics').txtApimName]",
+                    "publisherEmail": "[steps('basics').txtPublisherEmail]",
+                    "publisherName": "[steps('basics').txtPublisherName]",
+                    "sku": "Premium",
+                    "skuCount": "[steps.('basics').numUnitCount]",
+                    "virtualNetworkName": "[steps('networkSettings').vnet.name]",
+                    "subnetName": "[steps('networkSettings').vnet.subnets.subnet1.name]",
+                    "location": "[location()]",
+                    "availabilityZones": "[\"1\",\"2\",\"3\"]",
+                    "publicIpAddressId": "[concat(subscription().id, '/resourceGroups/', steps('basics').resourceScope.resourceGroup.name, '/providers/Microsoft.Network/publicIPAddresses/', steps('networkSettings').pip.name)]"
+                },
+                "kind" : "ResourceGroup",
+                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
+                "location": "[steps('basics').resourceScope.location.name]"
+            }
+        }
+    }
+}
