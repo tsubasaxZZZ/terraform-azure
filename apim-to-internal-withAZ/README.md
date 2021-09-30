@@ -32,6 +32,10 @@ cd 2_deploy-vnet
 terraform plan -out tfplan -var-file ../terraform.tfvars
 ```
 
+こちらの UI 定義を使用して展開することもできます。
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FtsubasaxZZZ%2Fterraform-azure%2Fmain%2Fapim-to-internal-withAZ%2F2_deploy-apim%2FcreateUiDefinition.json)
+
+
 # 関連 Issue
 - https://github.com/hashicorp/terraform-provider-azurerm/pull/12566
 - https://github.com/hashicorp/terraform-provider-azurerm/issues/12021
