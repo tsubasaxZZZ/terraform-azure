@@ -161,7 +161,7 @@
                     "skuCount": "[steps.('basics').numUnitCount]",
                     "virtualNetworkName": "[steps('networkSettings').vnet.name]",
                     "subnetName": "[steps('networkSettings').vnet.subnets.subnet1.name]",
-                    "location": "[location()]",
+                    "location": "[steps('basics').resourceScope.location.name]",
                     "availabilityZones": "[\"1\",\"2\",\"3\"]",
                     "publicIpAddressId": "[concat(subscription().id, '/resourceGroups/', steps('basics').resourceScope.resourceGroup.name, '/providers/Microsoft.Network/publicIPAddresses/', steps('networkSettings').pip.name)]"
                 },
