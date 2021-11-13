@@ -5,7 +5,7 @@ variable "location" {
   
 }
 
-variable "ssh_key_path" {
+variable "ssh_pub_key" {
   
 }
 
@@ -15,6 +15,6 @@ variable "aks_version" {
 variable "aks_worker_admin_username" {
   
 }
-variable "aks_worker_ssh_key_path" {
+variable "aks_worker_ssh_pub_key" {
   
 }

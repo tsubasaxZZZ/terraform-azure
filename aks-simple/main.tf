@@ -73,7 +73,7 @@ data "azurerm_ssh_public_key" "example" {
 module "linux-vm" {
   source              = "../modules/vm-linux"
   admin_username      = "tsunomur"
-  public_key          = file(var.ssh_key_path)
+  public_key          = var.ssh_pub_key
   name                = "vm-jumpbox"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
@@ -145,7 +145,7 @@ module "demo-aks" {
   api_auth_ips          = null
   additional_node_pools = {}
   aad_group_name        = null
-  ssh_key               = file(var.aks_worker_ssh_key_path)
+  ssh_key               = var.aks_worker_ssh_pub_key
   admin_username        = var.aks_worker_admin_username
 }
 
