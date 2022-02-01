@@ -31,6 +31,11 @@ variable "myipaddress" {
 
 }
 
+// 配列の配列でルートを指定する。1配列=1ルートテーブル
+variable "udr_service_tags" {
+  type    = list(list(string))
+  default = [[]]
+}
 
 terraform {
 }
@@ -91,9 +96,37 @@ resource "azurerm_subnet" "azfw" {
 #################
 
 resource "azurerm_route_table" "example" {
+  count               = length(var.udr_service_tags)
+  name                = "rt-example${count.index}"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  dynamic "route" {
+    for_each = var.udr_service_tags[count.index]
+    content {
+      name                   = route.value
+      address_prefix         = route.value
+      next_hop_type          = "VirtualAppliance"
+      next_hop_in_ip_address = azurerm_firewall.example.ip_configuration.0.private_ip_address
+    }
+  }
+}
+
+/*
+resource "azurerm_route_table" "example" {
   name                = "route-azfw"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
+}
+
+resource "azurerm_route" "alltags" {
+  count                  = length(var.udr_service_tags)
+  name                   = var.udr_service_tags[count.index]
+  resource_group_name    = azurerm_resource_group.example.name
+  route_table_name       = azurerm_route_table.example.name
+  address_prefix         = var.udr_service_tags[count.index]
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = azurerm_firewall.example.ip_configuration.0.private_ip_address
 }
 
 resource "azurerm_route" "azfw" {
@@ -121,9 +154,11 @@ resource "azurerm_route" "avd" {
 }
 
 resource "azurerm_subnet_route_table_association" "example" {
+  count          = length(var.udr_service_tags)
   subnet_id      = azurerm_subnet.default.id
-  route_table_id = azurerm_route_table.example.id
+  route_table_id = azurerm_route_table.example[count.index].id
 }
+*/
 
 #################
 # Windows VM
