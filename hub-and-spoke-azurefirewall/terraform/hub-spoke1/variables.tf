@@ -1,16 +1,10 @@
-/*
-variable "prefix" {
-  type = string
-}
-*/
-
 variable "rg" {
   type = object({
     name     = string
     location = string
   })
   default = {
-    name     = "rg-hub-spoke1"
+    name     = "rg-hubspoke-hub1"
     location = "japaneast"
   }
 }
@@ -20,6 +14,7 @@ variable "admin_username" {
   default   = "adminuser"
   sensitive = true
 }
+
 variable "admin_password" {
   type      = string
   default   = "Password1!"

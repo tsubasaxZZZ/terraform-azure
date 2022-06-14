@@ -223,8 +223,8 @@ module "vm-spoke1" {
   location            = azurerm_resource_group.hub.location
   name                = "vm-hub2-spoke1"
   zone                = "1"
-  admin_username      = "azureuser"
-  admin_password      = "Password1!"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   subnet_id           = azurerm_subnet.spoke1_default.id
 }
 
@@ -293,8 +293,8 @@ module "vm-spoke2" {
   location            = azurerm_resource_group.hub.location
   name                = "vm-hub2-spoke2"
   zone                = "1"
-  admin_username      = "azureuser"
-  admin_password      = "Password1!"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   subnet_id           = azurerm_subnet.spoke2_default.id
 }
 

@@ -1,16 +1,10 @@
-/*
-variable "prefix" {
-  type = string
-}
-*/
-
 variable "rg" {
   type = object({
     name     = string
     location = string
   })
   default = {
-    name     = "rg-hubspoke-2"
+    name     = "rg-hubspoke-hub2"
     location = "japaneast"
   }
 }
@@ -25,7 +19,7 @@ variable "hub1" {
     azfw_route_table_name = string
   })
   default = {
-    resource_group_name   = "rg-hub-spoke1"
+    resource_group_name   = "rg-hubspoke-hub1"
     vnet_name             = "vnet-hub1"
     azfw_name             = "afw-hub1"
     spoke1_vnet_name      = "vnet-hub1-spoke1"
