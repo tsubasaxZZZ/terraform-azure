@@ -38,3 +38,30 @@ variable "admin_password" {
   default   = "Password1!"
   sensitive = true
 }
+
+variable "hub_vnet" {
+  type = object({
+    base_cidr_block = string
+  })
+  default = {
+    base_cidr_block = "10.0.0.0/16"
+  }
+}
+
+variable "spoke_vnet1" {
+  type = object({
+    base_cidr_block = string
+  })
+  default = {
+    base_cidr_block = "10.100.0.0/16"
+  }
+}
+
+variable "spoke_vnet2" {
+  type = object({
+    base_cidr_block = string
+  })
+  default = {
+    base_cidr_block = "10.200.0.0/16"
+  }
+}

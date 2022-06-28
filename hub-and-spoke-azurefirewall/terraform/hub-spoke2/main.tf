@@ -64,7 +64,7 @@ resource "azurerm_virtual_network" "hub" {
 module "hub_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.hub_vnet.base_cidr_block
+  base_cidr_block = var.hub_vnet.base_cidr_block
   networks = [
     {
       name     = "default"
@@ -171,7 +171,7 @@ resource "azurerm_virtual_network" "spoke1" {
 module "spoke1_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.spoke_vnet1.base_cidr_block
+  base_cidr_block = var.spoke_vnet1.base_cidr_block
   networks = [
     {
       name     = "default"
@@ -241,7 +241,7 @@ resource "azurerm_virtual_network" "spoke2" {
 module "spoke2_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.spoke_vnet2.base_cidr_block
+  base_cidr_block = var.spoke_vnet2.base_cidr_block
   networks = [
     {
       name     = "default"

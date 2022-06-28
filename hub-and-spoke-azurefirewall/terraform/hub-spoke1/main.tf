@@ -35,7 +35,7 @@ resource "azurerm_log_analytics_workspace" "hub1" {
   name                = "la-hub1"
   location            = azurerm_resource_group.hub.location
   resource_group_name = azurerm_resource_group.hub.name
-  retention_in_days   = 30
+retention_in_days   = 30
 }
 
 data "azurerm_monitor_diagnostic_categories" "azfw-diag-categories" {
@@ -52,6 +52,135 @@ module "diag-azfw" {
 }
 
 // ------------------------------------------
+// On-prem
+// ------------------------------------------
+
+resource "azurerm_virtual_network" "onprem" {
+  name                = "vnet-onprem"
+  resource_group_name = azurerm_resource_group.hub.name
+  location            = azurerm_resource_group.hub.location
+  address_space       = [module.onprem_vnet_subnet_addrs.base_cidr_block]
+}
+
+module "onprem_vnet_subnet_addrs" {
+  source = "hashicorp/subnets/cidr"
+
+  base_cidr_block = var.onprem_vnet.base_cidr_block
+  networks = [
+    {
+      name     = "default"
+      new_bits = 8
+    },
+    {
+      name     = "vpngw",
+      new_bits = 8
+    },
+    {
+      name     = "bastion",
+      new_bits = 8
+    },
+  ]
+}
+
+resource "azurerm_subnet" "onprem_default" {
+  name                 = "snet-default"
+  resource_group_name  = azurerm_resource_group.hub.name
+  virtual_network_name = azurerm_virtual_network.onprem.name
+  address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["default"]]
+}
+
+resource "azurerm_subnet" "onprem_vpngw" {
+  // workaround: operate subnets one after another
+  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
+  depends_on = [
+    azurerm_subnet.onprem_default,
+  ]
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.hub.name
+  virtual_network_name = azurerm_virtual_network.onprem.name
+  address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["vpngw"]]
+}
+resource "azurerm_subnet" "onprem_bastion" {
+  // workaround: operate subnets one after another
+  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
+  depends_on = [
+    azurerm_subnet.onprem_vpngw
+  ]
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.hub.name
+  virtual_network_name = azurerm_virtual_network.onprem.name
+  address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["bastion"]]
+}
+
+module "bastion_onprem" {
+  source              = "../modules/bastion"
+  name                = "bastion-onprem"
+  resource_group_name = azurerm_resource_group.hub.name
+  location            = azurerm_resource_group.hub.location
+  subnet_id           = azurerm_subnet.onprem_bastion.id
+}
+
+module "vm-onprem1" {
+  source              = "../modules/vm-linux"
+  resource_group_name = azurerm_resource_group.hub.name
+  location            = azurerm_resource_group.hub.location
+  name                = "vm-hub1-onprem1"
+  zone                = "1"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
+  subnet_id           = azurerm_subnet.onprem_default.id
+}
+
+module "vpngw_onprem" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  source = "../modules/vpngateway"
+  name   = "vpng-onprem"
+  rg = {
+    name     = azurerm_resource_group.hub.name
+    location = azurerm_resource_group.hub.location
+  }
+  subnet_id = azurerm_subnet.onprem_vpngw.id
+
+  bgp = {
+    asn = 65516
+  }
+
+}
+
+resource "azurerm_virtual_network_gateway_connection" "onprem_to_hub1" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  name                = "onprem-to-hub1"
+  resource_group_name = azurerm_resource_group.hub.name
+  location            = azurerm_resource_group.hub.location
+
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = module.vpngw_onprem[0].virtual_network_gateway_id
+  peer_virtual_network_gateway_id = module.vpngw[0].virtual_network_gateway_id
+
+  enable_bgp = true
+
+  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+}
+
+resource "azurerm_virtual_network_gateway_connection" "hub1_to_onprem" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  name                = "hub1-to-onprem"
+  location            = azurerm_resource_group.hub.location
+  resource_group_name = azurerm_resource_group.hub.name
+
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = module.vpngw[0].virtual_network_gateway_id
+  peer_virtual_network_gateway_id = module.vpngw_onprem[0].virtual_network_gateway_id
+
+  enable_bgp = true
+
+  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+}
+
+// ------------------------------------------
 // Hub
 // ------------------------------------------
 resource "azurerm_virtual_network" "hub" {
@@ -64,7 +193,7 @@ resource "azurerm_virtual_network" "hub" {
 module "hub_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.hub_vnet.base_cidr_block
+  base_cidr_block = var.hub_vnet.base_cidr_block
   networks = [
     {
       name     = "default"
@@ -171,6 +300,21 @@ module "bastion" {
   subnet_id           = azurerm_subnet.hub_bastion.id
 
 }
+module "vpngw" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  source = "../modules/vpngateway"
+  name   = "vpng-hub1"
+  rg = {
+    name     = azurerm_resource_group.hub.name
+    location = azurerm_resource_group.hub.location
+  }
+  subnet_id = azurerm_subnet.hub_vpngw.id
+
+  bgp = {
+    asn = 65515
+  }
+}
 // ------------------------------------------
 // Spoke 1
 // ------------------------------------------
@@ -184,7 +328,7 @@ resource "azurerm_virtual_network" "spoke1" {
 module "spoke1_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.spoke_vnet1.base_cidr_block
+  base_cidr_block = var.spoke_vnet1.base_cidr_block
   networks = [
     {
       name     = "default"
@@ -254,7 +398,7 @@ resource "azurerm_virtual_network" "spoke2" {
 module "spoke2_vnet_subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = local.spoke_vnet2.base_cidr_block
+  base_cidr_block = var.spoke_vnet2.base_cidr_block
   networks = [
     {
       name     = "default"
