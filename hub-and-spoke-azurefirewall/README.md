@@ -8,6 +8,8 @@ Azure Firewall と 仮想ネットワーク のピアリングを使用してハ
 
 - ハブアンドスポークの環境が2つ作成されます
   - ハブ x 2、スポーク x 4
+- パラメーターで疑似オンプレミス環境を作成できます
+  - 疑似オンプレミス環境とハブは サイト間 VPN(BGP) で接続されます
 - 2つのハブ間はピアリングで接続されます
 - ハブには Azure Firewall が展開されます
 - それぞれスポークは UDR で Azure Firewall にルートされます
@@ -17,6 +19,9 @@ Azure Firewall と 仮想ネットワーク のピアリングを使用してハ
   - VM は 2:00(JST) に自動シャットダウンします
 - それぞれのハブに Bastion が展開されます
 - Azure Firewall の診断設定で Log Analytics が設定されます
+
+![Network](media/network.png)
+
 
 ## デプロイ方法
 
@@ -47,6 +52,10 @@ terraform init
 terraform plan -out tfplan
 terraform apply tfplan
 ```
+
+##### オンプレミスの展開
+
+`deploy_onprem_environment` を `true` にすると、`hub1` と同時に展開されます。
 
 #### hub2 の展開
 
