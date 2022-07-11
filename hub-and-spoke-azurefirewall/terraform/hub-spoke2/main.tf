@@ -165,26 +165,14 @@ resource "azurerm_virtual_network" "spoke1" {
   name                = "vnet-hub2-spoke1"
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
-  address_space       = [module.spoke1_vnet_subnet_addrs.base_cidr_block]
-}
-
-module "spoke1_vnet_subnet_addrs" {
-  source = "hashicorp/subnets/cidr"
-
-  base_cidr_block = var.spoke_vnet1.base_cidr_block
-  networks = [
-    {
-      name     = "default"
-      new_bits = 8
-    },
-  ]
+  address_space       = [var.spoke_vnet1.base_cidr_block]
 }
 
 resource "azurerm_subnet" "spoke1_default" {
   name                 = "snet-default"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.spoke1.name
-  address_prefixes     = [module.spoke1_vnet_subnet_addrs.network_cidr_blocks["default"]]
+  address_prefixes     = [var.spoke_vnet1.base_cidr_block]
 }
 
 resource "azurerm_route_table" "spoke1default" {
@@ -235,26 +223,14 @@ resource "azurerm_virtual_network" "spoke2" {
   name                = "vnet-hub2-spoke2"
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
-  address_space       = [module.spoke2_vnet_subnet_addrs.base_cidr_block]
-}
-
-module "spoke2_vnet_subnet_addrs" {
-  source = "hashicorp/subnets/cidr"
-
-  base_cidr_block = var.spoke_vnet2.base_cidr_block
-  networks = [
-    {
-      name     = "default"
-      new_bits = 8
-    },
-  ]
+  address_space       = [var.spoke_vnet2.base_cidr_block]
 }
 
 resource "azurerm_subnet" "spoke2_default" {
   name                 = "snet-default"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.spoke2.name
-  address_prefixes     = [module.spoke2_vnet_subnet_addrs.network_cidr_blocks["default"]]
+  address_prefixes     = [var.spoke_vnet2.base_cidr_block]
 }
 
 resource "azurerm_route_table" "spoke2default" {

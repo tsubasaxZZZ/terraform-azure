@@ -2,8 +2,8 @@ resource "azurerm_public_ip" "example" {
   name                = "pip-${var.name}"
   location            = var.rg.location
   resource_group_name = var.rg.name
-
-  allocation_method = "Dynamic"
+  sku                 = "Standard"
+  allocation_method   = "Static"
 }
 
 resource "azurerm_virtual_network_gateway" "example" {
@@ -16,12 +16,11 @@ resource "azurerm_virtual_network_gateway" "example" {
 
   active_active = false
   enable_bgp    = true
-  sku           = "Standard"
+  sku           = "VpnGw1"
 
   ip_configuration {
     name                          = "vnetGatewayConfig"
     public_ip_address_id          = azurerm_public_ip.example.id
-    private_ip_address_allocation = "Dynamic"
     subnet_id                     = var.subnet_id
   }
 

@@ -35,7 +35,7 @@ resource "azurerm_log_analytics_workspace" "hub1" {
   name                = "la-hub1"
   location            = azurerm_resource_group.hub.location
   resource_group_name = azurerm_resource_group.hub.name
-retention_in_days   = 30
+  retention_in_days   = 30
 }
 
 data "azurerm_monitor_diagnostic_categories" "azfw-diag-categories" {
@@ -88,28 +88,28 @@ resource "azurerm_subnet" "onprem_default" {
   virtual_network_name = azurerm_virtual_network.onprem.name
   address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["default"]]
 }
-
-resource "azurerm_subnet" "onprem_vpngw" {
+resource "azurerm_subnet" "onprem_bastion" {
   // workaround: operate subnets one after another
   // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
   depends_on = [
     azurerm_subnet.onprem_default,
   ]
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurerm_resource_group.hub.name
-  virtual_network_name = azurerm_virtual_network.onprem.name
-  address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["vpngw"]]
-}
-resource "azurerm_subnet" "onprem_bastion" {
-  // workaround: operate subnets one after another
-  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
-  depends_on = [
-    azurerm_subnet.onprem_vpngw
-  ]
   name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.onprem.name
   address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["bastion"]]
+}
+
+resource "azurerm_subnet" "onprem_vpngw" {
+  // workaround: operate subnets one after another
+  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
+  depends_on = [
+    azurerm_subnet.onprem_bastion,
+  ]
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.hub.name
+  virtual_network_name = azurerm_virtual_network.onprem.name
+  address_prefixes     = [module.onprem_vnet_subnet_addrs.network_cidr_blocks["vpngw"]]
 }
 
 module "bastion_onprem" {
@@ -131,6 +131,7 @@ module "vm-onprem1" {
   subnet_id           = azurerm_subnet.onprem_default.id
 }
 
+// ---------- VPN GW
 module "vpngw_onprem" {
   count = var.deploy_onprem_environment ? 1 : 0
 
@@ -148,6 +149,52 @@ module "vpngw_onprem" {
 
 }
 
+module "vpngw" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  source = "../modules/vpngateway"
+  name   = "vpng-hub1"
+  rg = {
+    name     = azurerm_resource_group.hub.name
+    location = azurerm_resource_group.hub.location
+  }
+  subnet_id = azurerm_subnet.hub_vpngw.id
+
+  bgp = {
+    asn = 65514
+  }
+}
+
+resource "azurerm_local_network_gateway" "hub1" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  name                = "hub1"
+  location            = azurerm_resource_group.hub.location
+  resource_group_name = azurerm_resource_group.hub.name
+  gateway_address     = module.vpngw[0].public_ip_address
+  address_space       = [var.hub_vnet.base_cidr_block, var.spoke_vnet1.base_cidr_block, var.spoke_vnet2.base_cidr_block]
+
+  bgp_settings {
+    asn                 = 65514
+    bgp_peering_address = module.vpngw[0].bgp_peering_address
+  }
+}
+
+resource "azurerm_local_network_gateway" "onprem" {
+  count = var.deploy_onprem_environment ? 1 : 0
+
+  name                = "onprem"
+  location            = azurerm_resource_group.hub.location
+  resource_group_name = azurerm_resource_group.hub.name
+  gateway_address     = module.vpngw_onprem[0].public_ip_address
+  address_space       = [var.onprem_vnet.base_cidr_block]
+
+  bgp_settings {
+    asn                 = 65516
+    bgp_peering_address = module.vpngw_onprem[0].bgp_peering_address
+  }
+}
+
 resource "azurerm_virtual_network_gateway_connection" "onprem_to_hub1" {
   count = var.deploy_onprem_environment ? 1 : 0
 
@@ -155,9 +202,10 @@ resource "azurerm_virtual_network_gateway_connection" "onprem_to_hub1" {
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
 
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = module.vpngw_onprem[0].virtual_network_gateway_id
-  peer_virtual_network_gateway_id = module.vpngw[0].virtual_network_gateway_id
+  type                       = "IPsec"
+  virtual_network_gateway_id = module.vpngw_onprem[0].virtual_network_gateway_id
+  local_network_gateway_id   = azurerm_local_network_gateway.hub1[0].id
+  //peer_virtual_network_gateway_id = module.vpngw[0].virtual_network_gateway_id
 
   enable_bgp = true
 
@@ -168,16 +216,50 @@ resource "azurerm_virtual_network_gateway_connection" "hub1_to_onprem" {
   count = var.deploy_onprem_environment ? 1 : 0
 
   name                = "hub1-to-onprem"
-  location            = azurerm_resource_group.hub.location
   resource_group_name = azurerm_resource_group.hub.name
+  location            = azurerm_resource_group.hub.location
 
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = module.vpngw[0].virtual_network_gateway_id
-  peer_virtual_network_gateway_id = module.vpngw_onprem[0].virtual_network_gateway_id
+  type                       = "IPsec"
+  virtual_network_gateway_id = module.vpngw[0].virtual_network_gateway_id
+  local_network_gateway_id   = azurerm_local_network_gateway.onprem[0].id
+  //peer_virtual_network_gateway_id = module.vpngw_onprem[0].virtual_network_gateway_id
 
   enable_bgp = true
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+}
+
+resource "azurerm_route_table" "hub_gw" {
+  name                          = "rt-hub1-gw"
+  resource_group_name           = azurerm_resource_group.hub.name
+  location                      = azurerm_resource_group.hub.location
+  disable_bgp_route_propagation = false
+
+  lifecycle {
+    ignore_changes = [
+      route
+    ]
+  }
+
+  route = [
+    {
+      name                   = "toSpoke1"
+      address_prefix         = var.spoke_vnet1.base_cidr_block
+      next_hop_type          = "VirtualAppliance"
+      next_hop_in_ip_address = module.azfw.private_ip_address
+    },
+    {
+      name                   = "toSpoke2"
+      address_prefix         = var.spoke_vnet2.base_cidr_block
+      next_hop_type          = "VirtualAppliance"
+      next_hop_in_ip_address = module.azfw.private_ip_address
+    },
+  ]
+}
+
+resource "azurerm_subnet_route_table_association" "hub_gw" {
+  subnet_id      = azurerm_subnet.hub_vpngw.id
+  route_table_id = azurerm_route_table.hub_gw.id
 }
 
 // ------------------------------------------
@@ -221,38 +303,39 @@ resource "azurerm_subnet" "hub_default" {
   address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["default"]]
 }
 
-resource "azurerm_subnet" "hub_vpngw" {
+resource "azurerm_subnet" "hub_bastion" {
   // workaround: operate subnets one after another
   // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
   depends_on = [
     azurerm_subnet.hub_default,
   ]
-  name                 = "GatewaySubnet"
+  name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.hub.name
-  address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["vpngw"]]
+  address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["bastion"]]
 }
+
 resource "azurerm_subnet" "hub_azfw" {
   // workaround: operate subnets one after another
   // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
   depends_on = [
-    azurerm_subnet.hub_vpngw,
+    azurerm_subnet.hub_bastion,
   ]
   name                 = "AzureFirewallSubnet"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.hub.name
   address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["azfw"]]
 }
-resource "azurerm_subnet" "hub_bastion" {
+resource "azurerm_subnet" "hub_vpngw" {
   // workaround: operate subnets one after another
   // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
   depends_on = [
     azurerm_subnet.hub_azfw,
   ]
-  name                 = "AzureBastionSubnet"
+  name                 = "GatewaySubnet"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.hub.name
-  address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["bastion"]]
+  address_prefixes     = [module.hub_vnet_subnet_addrs.network_cidr_blocks["vpngw"]]
 }
 
 module "azfw" {
@@ -300,21 +383,7 @@ module "bastion" {
   subnet_id           = azurerm_subnet.hub_bastion.id
 
 }
-module "vpngw" {
-  count = var.deploy_onprem_environment ? 1 : 0
 
-  source = "../modules/vpngateway"
-  name   = "vpng-hub1"
-  rg = {
-    name     = azurerm_resource_group.hub.name
-    location = azurerm_resource_group.hub.location
-  }
-  subnet_id = azurerm_subnet.hub_vpngw.id
-
-  bgp = {
-    asn = 65515
-  }
-}
 // ------------------------------------------
 // Spoke 1
 // ------------------------------------------
@@ -322,26 +391,14 @@ resource "azurerm_virtual_network" "spoke1" {
   name                = "vnet-hub1-spoke1"
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
-  address_space       = [module.spoke1_vnet_subnet_addrs.base_cidr_block]
-}
-
-module "spoke1_vnet_subnet_addrs" {
-  source = "hashicorp/subnets/cidr"
-
-  base_cidr_block = var.spoke_vnet1.base_cidr_block
-  networks = [
-    {
-      name     = "default"
-      new_bits = 8
-    },
-  ]
+  address_space       = [var.spoke_vnet1.base_cidr_block]
 }
 
 resource "azurerm_subnet" "spoke1_default" {
   name                 = "snet-default"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.spoke1.name
-  address_prefixes     = [module.spoke1_vnet_subnet_addrs.network_cidr_blocks["default"]]
+  address_prefixes     = [var.spoke_vnet1.base_cidr_block]
 }
 
 resource "azurerm_route_table" "spoke1default" {
@@ -392,26 +449,14 @@ resource "azurerm_virtual_network" "spoke2" {
   name                = "vnet-hub1-spoke2"
   resource_group_name = azurerm_resource_group.hub.name
   location            = azurerm_resource_group.hub.location
-  address_space       = [module.spoke2_vnet_subnet_addrs.base_cidr_block]
-}
-
-module "spoke2_vnet_subnet_addrs" {
-  source = "hashicorp/subnets/cidr"
-
-  base_cidr_block = var.spoke_vnet2.base_cidr_block
-  networks = [
-    {
-      name     = "default"
-      new_bits = 8
-    },
-  ]
+  address_space       = [var.spoke_vnet2.base_cidr_block]
 }
 
 resource "azurerm_subnet" "spoke2_default" {
   name                 = "snet-default"
   resource_group_name  = azurerm_resource_group.hub.name
   virtual_network_name = azurerm_virtual_network.spoke2.name
-  address_prefixes     = [module.spoke2_vnet_subnet_addrs.network_cidr_blocks["default"]]
+  address_prefixes     = [var.spoke_vnet2.base_cidr_block]
 }
 
 resource "azurerm_route_table" "spoke2default" {
