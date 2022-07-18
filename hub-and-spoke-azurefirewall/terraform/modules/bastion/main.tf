@@ -120,6 +120,16 @@ resource "azurerm_network_security_rule" "bastion-gsi-out" {
   network_security_group_name = azurerm_network_security_group.bastion.name
 }
 resource "azurerm_subnet_network_security_group_association" "hub-bastion" {
+  depends_on = [
+    azurerm_network_security_rule.bastion-azurecloud-out,
+    azurerm_network_security_rule.bastion-bastioncommunication-out,
+    azurerm_network_security_rule.bastion-gsi-out,
+    azurerm_network_security_rule.bastion-gwm,
+    azurerm_network_security_rule.bastion-https,
+    azurerm_network_security_rule.bastion-hc,
+    azurerm_network_security_rule.bastion-lb,
+    azurerm_network_security_rule.bastion-sshrdp-out,
+  ]
   subnet_id                 = var.subnet_id
   network_security_group_id = azurerm_network_security_group.bastion.id
 }
@@ -133,6 +143,10 @@ resource "azurerm_public_ip" "bastion" {
 }
 
 resource "azurerm_bastion_host" "bastion" {
+  depends_on = [
+    azurerm_subnet_network_security_group_association.hub-bastion
+  ]
+
   name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location

@@ -1,11 +1,5 @@
-locals {
-  firewall = {
-    name = "fw-${var.id}"
-  }
-}
-
 resource "azurerm_public_ip" "example" {
-  name                = "pip-${local.firewall.name}"
+  name                = "pip-${var.name}"
   location            = var.rg.location
   resource_group_name = var.rg.name
   allocation_method   = "Static"
@@ -134,7 +128,7 @@ resource "azurerm_key_vault_certificate" "example" {
 }
 */
 resource "azurerm_firewall_policy" "example" {
-  name                = "afwp-${var.id}"
+  name                = "afwp-${var.name}"
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku                 = "Premium"
@@ -151,7 +145,7 @@ resource "azurerm_firewall_policy" "example" {
 }
 
 resource "azurerm_firewall" "example" {
-  name                = "afw-${var.id}"
+  name                = var.name
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku_name            = "AZFW_VNet"

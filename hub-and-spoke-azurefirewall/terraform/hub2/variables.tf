@@ -9,6 +9,11 @@ variable "rg" {
   }
 }
 
+variable "environment_name" {
+  type    = string
+  default = "hub2"
+}
+
 variable "hub1" {
   type = object({
     vnet_name             = string
@@ -44,7 +49,7 @@ variable "hub_vnet" {
     base_cidr_block = string
   })
   default = {
-    base_cidr_block = "10.0.0.0/16"
+    base_cidr_block = "10.1.0.0/16"
   }
 }
 
@@ -53,7 +58,7 @@ variable "spoke_vnet1" {
     base_cidr_block = string
   })
   default = {
-    base_cidr_block = "10.100.0.0/16"
+    base_cidr_block = "10.101.0.0/16"
   }
 }
 
@@ -62,6 +67,6 @@ variable "spoke_vnet2" {
     base_cidr_block = string
   })
   default = {
-    base_cidr_block = "10.200.0.0/16"
+    base_cidr_block = "10.201.0.0/16"
   }
 }

@@ -4,3 +4,6 @@ output "private_ip_address" {
 output "id" {
   value = azurerm_firewall.example.id
 }
+output "name" {
+  value = azurerm_firewall.example.name
+}

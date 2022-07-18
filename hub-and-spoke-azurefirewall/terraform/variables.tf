@@ -3,15 +3,10 @@ variable "rg" {
     name     = string
     location = string
   })
-  default = {
-    name     = "rg-hubspoke-hub1"
-    location = "japaneast"
-  }
 }
 
-variable "deploy_onprem_environment" {
-  type = bool
-  default = false
+variable "environment_name" {
+  type = string
 }
 
 variable "admin_username" {

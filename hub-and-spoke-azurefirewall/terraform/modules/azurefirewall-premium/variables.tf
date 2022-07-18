@@ -5,8 +5,9 @@ variable "rg" {
   })
 }
 
-variable "id" {
-  type = string
+variable "name" {
+  type    = string
+  default = "fw-example"
 }
 
 variable "subnet_id" {
