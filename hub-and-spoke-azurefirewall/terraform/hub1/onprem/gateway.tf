@@ -112,6 +112,9 @@ resource "azurerm_route_table" "hub_gw" {
 }
 
 resource "azurerm_subnet_route_table_association" "hub_gw" {
+  depends_on = [
+    module.vpngw
+  ]
   subnet_id      = var.hub_vnet_gw_subnet_id
   route_table_id = azurerm_route_table.hub_gw.id
 }
