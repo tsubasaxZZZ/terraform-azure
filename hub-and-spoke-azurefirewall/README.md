@@ -47,7 +47,7 @@ export ARM_TENANT_ID="<Tenant ID>"
 #### hub1 の展開
 
 ```sh
-cd hub-spoke1
+cd hub1
 terraform init
 terraform plan -out tfplan
 terraform apply tfplan
@@ -60,7 +60,7 @@ terraform apply tfplan
 #### hub2 の展開
 
 ```sh
-cd hub-spoke2
+cd hub1
 terraform init
 terraform plan -out tfplan
 terraform apply tfplan
