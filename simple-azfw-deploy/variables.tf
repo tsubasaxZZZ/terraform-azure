@@ -13,6 +13,11 @@ variable "subnet_id" {
   type = string
 }
 
+variable "sku" {
+  type    = string
+  default = "Standard"
+}
+
 variable "azurefirewall_network_rule" {
   type = list(object({
     name     = string

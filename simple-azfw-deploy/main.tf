@@ -17,7 +17,7 @@ resource "azurerm_firewall_policy" "example" {
   name                = "afwp-${var.id}"
   location            = var.rg.location
   resource_group_name = var.rg.name
-  sku                 = "Premium"
+  sku                 = var.sku
 }
 
 resource "azurerm_firewall" "example" {
@@ -25,7 +25,7 @@ resource "azurerm_firewall" "example" {
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku_name            = "AZFW_VNet"
-  sku_tier            = "Premium"
+  sku_tier            = var.sku
   zones               = ["1", "2", "3"]
   firewall_policy_id  = azurerm_firewall_policy.example.id
 
