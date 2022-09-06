@@ -1,1 +1,1 @@
-{"Modules":[]}
+{"Modules":[{"Key":"jumpbox","Source":"../modules/vm-windows-2019/","Dir":"../modules/vm-windows-2019"},{"Key":"jumpbox-linux","Source":"../modules/vm-linux/","Dir":"../modules/vm-linux"},{"Key":"webserver","Source":"../modules/vm-linux/","Dir":"../modules/vm-linux"},{"Key":"bastion","Source":"../modules/bastion/","Dir":"../modules/bastion"}]}
