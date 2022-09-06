@@ -1,4 +1,4 @@
 rg = {
-  name     = "rg-webapps-with-afd"
-  location = "japaneast"
+  name     = "rg-webapps-with-afd-eastus"
+  location = "eastus"
 }

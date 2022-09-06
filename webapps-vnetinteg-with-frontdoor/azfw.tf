@@ -1,4 +1,3 @@
-
 resource "azurerm_route_table" "appservice" {
   name                          = "rt-appservice"
   resource_group_name           = azurerm_resource_group.example.name
@@ -24,4 +23,17 @@ module "azfw" {
   }
   name      = "afw-appservice"
   subnet_id = azurerm_subnet.azfw.id
+}
+
+data "azurerm_monitor_diagnostic_categories" "azfw_diag_category" {
+  resource_id = module.azfw.id
+}
+
+module "afw_diag" {
+  source                     = "../modules/diagnostic_logs"
+  name                       = "diag"
+  target_resource_id         = module.azfw.id
+  log_analytics_workspace_id = module.la.id
+  diagnostic_logs            = data.azurerm_monitor_diagnostic_categories.azfw_diag_category.logs
+  retention                  = 30
 }
