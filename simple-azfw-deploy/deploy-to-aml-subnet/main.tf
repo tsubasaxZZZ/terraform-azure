@@ -27,6 +27,7 @@ module "azfw" {
   rg        = var.rg
   id        = var.id
   subnet_id = var.subnet_id
+  sku       = var.sku
 
 
   azurefirewall_application_rule = [{

@@ -1,11 +1,5 @@
-locals {
-  firewall = {
-    name = "fw-${var.id}"
-  }
-}
-
 resource "azurerm_public_ip" "example" {
-  name                = "pip-${local.firewall.name}"
+  name                = "pip-${var.name}"
   location            = var.rg.location
   resource_group_name = var.rg.name
   allocation_method   = "Static"
@@ -14,18 +8,19 @@ resource "azurerm_public_ip" "example" {
 }
 
 resource "azurerm_firewall_policy" "example" {
-  name                = "afwp-${var.id}"
+  name                = "afwp-${var.name}"
   location            = var.rg.location
   resource_group_name = var.rg.name
-  sku                 = var.sku
+  sku                 = "Premium"
+
 }
 
 resource "azurerm_firewall" "example" {
-  name                = "afw-${var.id}"
+  name                = var.name
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku_name            = "AZFW_VNet"
-  sku_tier            = var.sku
+  sku_tier            = "Premium"
   zones               = ["1", "2", "3"]
   firewall_policy_id  = azurerm_firewall_policy.example.id
 
@@ -37,19 +32,9 @@ resource "azurerm_firewall" "example" {
 }
 
 resource "azurerm_firewall_policy_rule_collection_group" "example" {
-  name               = "RuleCollectionGroup"
+  name               = "HubSpokeCollection"
   firewall_policy_id = azurerm_firewall_policy.example.id
   priority           = 1000
-
-  /*
-  lifecycle {
-    ignore_changes = [
-      network_rule_collection,
-      application_rule_collection,
-      nat_rule_collection
-    ]
-  }
-*/
 
   dynamic "network_rule_collection" {
     for_each = var.azurefirewall_network_rule
@@ -65,7 +50,6 @@ resource "azurerm_firewall_policy_rule_collection_group" "example" {
           source_addresses      = rule.value.source_addresses
           destination_addresses = rule.value.destination_addresses
           destination_ports     = rule.value.destination_ports
-          destination_fqdns     = rule.value.destination_fqdns
         }
       }
     }

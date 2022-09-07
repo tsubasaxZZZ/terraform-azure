@@ -205,3 +205,55 @@ resource "azurerm_cdn_frontdoor_origin" "azfw" {
   priority           = 1
   weight             = 500
 }
+
+//-----------------------------------------
+// AzFW with Private Endpoint- App Service 
+//-----------------------------------------
+resource "azurerm_cdn_frontdoor_endpoint" "azfwpe" {
+  name                     = "endpoint-${random_string.uniqstr.result}-azfwpe"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.example.id
+}
+
+resource "azurerm_cdn_frontdoor_origin_group" "azfwpe" {
+  name                     = "example-azfwpe"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.example.id
+  session_affinity_enabled = true
+
+  restore_traffic_time_to_healed_or_new_endpoint_in_minutes = 10
+
+  health_probe {
+    interval_in_seconds = 10
+    path                = "/"
+    protocol            = "Https"
+    request_type        = "GET"
+  }
+
+  load_balancing {
+    additional_latency_in_milliseconds = 0
+    sample_size                        = 16
+    successful_samples_required        = 3
+  }
+}
+
+resource "azurerm_cdn_frontdoor_origin" "azfwpe" {
+  name                          = "example-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.azfwpe.id
+
+  health_probes_enabled          = true
+  certificate_name_check_enabled = true
+
+  host_name          = azurerm_linux_web_app.app5.default_hostname
+  http_port          = 80
+  https_port         = 443
+  origin_host_header = azurerm_linux_web_app.app5.default_hostname
+  priority           = 1
+  weight             = 500
+
+  private_link {
+    request_message        = "Request access for Private Link Origin CDN Frontdoor"
+    target_type            = "sites"
+    location               = azurerm_linux_web_app.app5.location
+    private_link_target_id = azurerm_linux_web_app.app5.id
+  }
+}
+

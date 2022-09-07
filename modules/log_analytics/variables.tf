@@ -16,9 +16,11 @@ variable "location" {
 variable "sku" {
   description = "The SKU of the Log Analytics workspace"
   type        = string
+  default     = null
 }
 
 variable "retention" {
   description = "The retention time of the Log Analytics workspace"
   type        = number
+  default     = 30
 }

@@ -16,3 +16,8 @@ variable "subnet_id" {
 variable "source_ip_range" {
   type = string
 }
+
+variable "sku" {
+  type    = string
+  default = "Standard"
+}

@@ -109,6 +109,25 @@ resource "azurerm_linux_web_app" "app3" {
     vnet_route_all_enabled = true
   }
 }
+resource "azurerm_linux_web_app" "app5" {
+  name                = "app-${random_string.uniqstr.result}-pe-azfw"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_service_plan.example.location
+  
+  service_plan_id           = azurerm_service_plan.azfw.id
+  virtual_network_subnet_id = azurerm_subnet.appservice_azfw.id
+  
+  /*
+  service_plan_id           = azurerm_service_plan.example.id
+  virtual_network_subnet_id = azurerm_subnet.appservice.id
+*/
+  site_config {
+    application_stack {
+      node_version = "16-lts"
+    }
+    vnet_route_all_enabled = true
+  }
+}
 // Backend of NAT GW
 resource "azurerm_linux_web_app" "app4" {
   name                      = "app-${random_string.uniqstr.result}-natgw"
@@ -158,6 +177,14 @@ module "app4_diag" {
   source                     = "../modules/diagnostic_logs"
   name                       = "app4-diag"
   target_resource_id         = azurerm_linux_web_app.app4.id
+  log_analytics_workspace_id = module.la.id
+  diagnostic_logs            = data.azurerm_monitor_diagnostic_categories.app1_diag_category.logs
+  retention                  = 30
+}
+module "app5_diag" {
+  source                     = "../modules/diagnostic_logs"
+  name                       = "diag"
+  target_resource_id         = azurerm_linux_web_app.app5.id
   log_analytics_workspace_id = module.la.id
   diagnostic_logs            = data.azurerm_monitor_diagnostic_categories.app1_diag_category.logs
   retention                  = 30
@@ -228,6 +255,16 @@ resource "azurerm_subnet" "appservice_natgw" {
     }
   }
 }
+
+resource "azurerm_subnet" "privateendpoint" {
+  name                 = "snet-privateendpoint"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.254.4.0/24"]
+  depends_on = [
+    azurerm_subnet.appservice_natgw,
+  ]
+}
 resource "azurerm_subnet" "azfw" {
   name                 = "AzureFirewallSubnet"
   resource_group_name  = azurerm_resource_group.example.name
@@ -247,7 +284,7 @@ module "jumpbox-linux" {
   location            = azurerm_resource_group.example.location
   name                = "vmjumpboxlinux"
   subnet_id           = azurerm_subnet.vm.id
-  public_key          = file("~/.ssh/id_rsa.pub")
+  public_key          = var.ssh_public_key
   custom_data         = "test"
 }
 resource "azurerm_subnet" "bastion" {
