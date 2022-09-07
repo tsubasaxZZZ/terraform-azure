@@ -26,6 +26,13 @@ App Service VNet integration is a feature that allows you to deploy your web app
 
 ## デプロイ方法
 
+### 0. git clone
+
+```sh
+git clone https://github.com/tsubasaxZZZ/terraform-azure.git
+cd webapps-vnetinteg-with-frontdoor
+```
+
 ### 1. 事前準備
 
 Terraform で Azure のリソースを展開するための認証情報を取得します。以下はサービス プリンシパルを使う方法ですが、Azure CLI のクレデンシャルを使用する方法が推奨です。
