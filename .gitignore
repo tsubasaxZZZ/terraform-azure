@@ -29,3 +29,4 @@ override.tf.json
 # example: *tfplan*
 *tfplan*
 azfw-vm-proxy_for_teamstest/terraform.tfvars
+hub-and-spoke-azurefirewall/terraform/*/terraform.tfvars

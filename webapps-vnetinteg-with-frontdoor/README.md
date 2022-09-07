@@ -6,6 +6,24 @@ App Service VNet integration is a feature that allows you to deploy your web app
 
 ![](images/ss.png)
 
+### 展開されるもの
+
+- App Service x 5
+  - 送信制御無し
+  - 送信制御無し+カスタムコンテナ
+  - NATGW用
+  - Azure FW用
+  - Azure FW + AFD->PrivateEndpoint用
+- 送信制御用リソース
+  - NATGW
+  - Azure Firewall + ルート テーブル
+- Bastion
+- 踏み台用 LinuxVM
+- Front Door
+- Log Analytics
+
+![](images/ss4.png)
+
 ## デプロイ方法
 
 ### 1. 事前準備
@@ -28,7 +46,7 @@ rg = {
   name     = "rg-webapps-with-afd-jpeast"
   location = "japaneast"
 }
-ssh_public_key = "<SSH公開鍵>"
+ssh_public_key = "<踏み台LinuxVM用SSH公開鍵>"
 
 ```
 
