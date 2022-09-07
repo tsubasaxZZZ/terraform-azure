@@ -62,6 +62,7 @@ ssh_public_key = "<踏み台LinuxVM用SSH公開鍵>"
 #### 1. Terraform の実行
 
 ```sh
+terraform init
 terraform plan -out tfplan
 terraform apply "tfplan"
 ```
