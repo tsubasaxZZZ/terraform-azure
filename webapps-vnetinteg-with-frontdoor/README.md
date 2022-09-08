@@ -51,7 +51,7 @@ terraform.tfvars の内容を編集します。
 ```
 rg = {
   name     = "rg-webapps-with-afd-jpeast"
-  location = "japaneast"
+  location = "japaneast" //ゾーンのあるリージョンが対象
 }
 ssh_public_key = "<踏み台LinuxVM用SSH公開鍵>"
 
