@@ -109,6 +109,15 @@ resource "azurerm_cdn_frontdoor_security_policy" "example" {
         domain {
           cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.example.id
         }
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.natgw.id
+        }
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.azfw.id
+        }
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.azfwpe.id
+        }
         patterns_to_match = [
           "/*"
         ]
