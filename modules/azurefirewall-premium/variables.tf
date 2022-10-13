@@ -4,12 +4,20 @@ variable "rg" {
     location = string
   })
 }
+variable "id" {
+  type    = string
+  default = "dev"
+}
 
 variable "name" {
   type    = string
   default = "fw-example"
 }
 
+variable "sku" {
+  type    = string
+  default = "Premium"
+}
 variable "subnet_id" {
   type = string
 }
@@ -25,6 +33,7 @@ variable "azurefirewall_network_rule" {
       source_addresses      = list(string)
       destination_addresses = list(string)
       destination_ports     = list(string)
+      destination_fqdns     = list(string)
     }))
   }))
   default = [
@@ -39,6 +48,7 @@ variable "azurefirewall_network_rule" {
           source_addresses      = ["*"]
           destination_addresses = ["*"]
           destination_ports     = ["*"]
+          destination_fqdns     = []
         }
       ]
     }
