@@ -93,3 +93,16 @@ output "ip_configuration_name" {
 output "private_ip_address" {
   value = azurerm_network_interface.nic.private_ip_address
 }
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "autoshutdown" {
+  virtual_machine_id = azurerm_linux_virtual_machine.linux.id
+  location           = azurerm_linux_virtual_machine.linux.location
+  enabled            = true
+
+  daily_recurrence_time = "0200"
+  timezone              = "Tokyo Standard Time"
+
+  notification_settings {
+    enabled = false
+  }
+}
