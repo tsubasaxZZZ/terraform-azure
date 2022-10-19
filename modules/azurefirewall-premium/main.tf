@@ -9,7 +9,7 @@ resource "azurerm_public_ip" "example" {
   resource_group_name = var.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
-  zones               = ["1", "2", "3"]
+  zones               = var.zones
 }
 
 resource "azurerm_firewall_policy" "example" {
@@ -17,7 +17,6 @@ resource "azurerm_firewall_policy" "example" {
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku                 = var.sku
-
 }
 
 resource "azurerm_firewall" "example" {
@@ -26,7 +25,7 @@ resource "azurerm_firewall" "example" {
   resource_group_name = var.rg.name
   sku_name            = "AZFW_VNet"
   sku_tier            = var.sku
-  zones               = ["1", "2", "3"]
+  zones               = var.zones
   firewall_policy_id  = azurerm_firewall_policy.example.id
 
   ip_configuration {

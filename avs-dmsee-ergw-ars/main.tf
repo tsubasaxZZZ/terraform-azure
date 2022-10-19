@@ -73,6 +73,10 @@ module "azure_east_subnet_addrs" {
       name     = "routeserver",
       new_bits = 8
     },
+    {
+      name     = "azfw",
+      new_bits = 8
+    }
   ]
 }
 resource "azurerm_subnet" "east_default" {
@@ -117,6 +121,17 @@ resource "azurerm_subnet" "east_routeserver" {
   virtual_network_name = azurerm_virtual_network.east.name
   address_prefixes     = [module.azure_east_subnet_addrs.network_cidr_blocks["routeserver"]]
 }
+resource "azurerm_subnet" "east_azfw" {
+  // workaround: operate subnets one after another
+  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
+  depends_on = [
+    azurerm_subnet.east_routeserver,
+  ]
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.east.name
+  address_prefixes     = [module.azure_east_subnet_addrs.network_cidr_blocks["azfw"]]
+}
 
 resource "azurerm_virtual_network" "west" {
   name                = "vnet-west"
@@ -145,6 +160,10 @@ module "azure_west_subnet_addrs" {
       name     = "routeserver",
       new_bits = 8
     },
+    {
+      name     = "azfw",
+      new_bits = 8
+    }
   ]
 }
 
@@ -188,6 +207,17 @@ resource "azurerm_subnet" "west_routeserver" {
   resource_group_name  = azurerm_resource_group.example.name
   virtual_network_name = azurerm_virtual_network.west.name
   address_prefixes     = [module.azure_west_subnet_addrs.network_cidr_blocks["routeserver"]]
+}
+resource "azurerm_subnet" "west_azfw" {
+  // workaround: operate subnets one after another
+  // https://github.com/hashicorp/terraform-provider-azurerm/issues/3780
+  depends_on = [
+    azurerm_subnet.west_routeserver,
+  ]
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.west.name
+  address_prefixes     = [module.azure_west_subnet_addrs.network_cidr_blocks["azfw"]]
 }
 
 // --- Azure Bastion ---

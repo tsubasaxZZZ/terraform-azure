@@ -22,6 +22,11 @@ variable "subnet_id" {
   type = string
 }
 
+variable "zones" {
+  type     = list(string)
+  default  = ["1", "2", "3"]
+}
+
 variable "azurefirewall_network_rule" {
   type = list(object({
     name     = string

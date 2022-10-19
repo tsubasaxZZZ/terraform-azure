@@ -22,9 +22,6 @@ runcmd:
   - apt update && apt -y install frr frr-pythontools
   - sed -i.org 's/bgpd=no/bgpd=yes/' /etc/frr/daemons
   - systemctl restart frr
-  - wget -O /tmp/frr.conf ${var.east_frrconf_url}
-  - \mv /tmp/frr.conf /etc/frr/frr.conf
-  - systemctl restart frr
 EOF
 }
 resource "azurerm_public_ip" "ars_east" {
@@ -73,9 +70,6 @@ runcmd:
   - echo deb https://deb.frrouting.org/frr $(lsb_release -s -c) $FRRVER | tee -a /etc/apt/sources.list.d/frr.list
   - apt update && apt -y install frr frr-pythontools
   - sed -i.org 's/bgpd=no/bgpd=yes/' /etc/frr/daemons
-  - systemctl restart frr
-  - wget -O /tmp/frr.conf ${var.west_frrconf_url}
-  - \mv /tmp/frr.conf /etc/frr/frr.conf
   - systemctl restart frr
 EOF
 }
