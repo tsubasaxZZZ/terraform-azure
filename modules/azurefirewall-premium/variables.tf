@@ -120,7 +120,6 @@ variable "azurefirewall_nat_rule" {
       name                = string
       protocols           = list(string)
       source_addresses    = list(string)
-      destination_address = string
       destination_ports   = list(string)
       translated_address  = string
       translated_port     = string
@@ -131,7 +130,6 @@ variable "azurefirewall_nat_rule" {
     name     = "TestDnatRule_SSH-SpokeVM"
     priority = 500
     rule = [{
-      destination_address = "20.210.58.19"
       destination_ports   = ["22"]
       name                = "SSH"
       protocols           = ["TCP"]

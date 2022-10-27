@@ -65,3 +65,16 @@ resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "autoshutdown" {
+  virtual_machine_id = azurerm_windows_virtual_machine.windows.id
+  location           = azurerm_windows_virtual_machine.windows.location
+  enabled            = true
+
+  daily_recurrence_time = "0200"
+  timezone              = "Tokyo Standard Time"
+
+  notification_settings {
+    enabled = false
+  }
+}

@@ -1,4 +1,4 @@
-module "east" {
+module "vngw_east" {
   source = "./modules/ergateway"
   name   = "ergw-east"
   rg = {
@@ -8,7 +8,7 @@ module "east" {
   subnet_id = azurerm_subnet.east_vpngw.id
 }
 
-module "west" {
+module "vngw_west" {
   source = "./modules/ergateway"
   name   = "ergw-west"
   rg = {
@@ -27,8 +27,13 @@ resource "azurerm_virtual_network_gateway_connection" "east2mseeeast" {
   location            = var.azure_east.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.east.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_east.virtual_network_gateway_id
   authorization_key          = var.msee_east[0].auth_key
   express_route_circuit_id   = var.msee_east[0].peering_url
 }
@@ -39,8 +44,14 @@ resource "azurerm_virtual_network_gateway_connection" "west2mseewest" {
   location            = var.azure_west.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.east2mseeeast
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.west.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_west.virtual_network_gateway_id
   authorization_key          = var.msee_west[0].auth_key
   express_route_circuit_id   = var.msee_west[0].peering_url
 }
@@ -51,8 +62,14 @@ resource "azurerm_virtual_network_gateway_connection" "east2mseewest" {
   location            = var.azure_east.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.west2mseewest
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.east.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_east.virtual_network_gateway_id
   authorization_key          = var.msee_west[1].auth_key
   express_route_circuit_id   = var.msee_west[1].peering_url
 }
@@ -63,8 +80,14 @@ resource "azurerm_virtual_network_gateway_connection" "west2mseeeast" {
   location            = var.azure_west.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.east2mseewest
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.west.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_west.virtual_network_gateway_id
   authorization_key          = var.msee_east[1].auth_key
   express_route_circuit_id   = var.msee_east[1].peering_url
 }
@@ -77,8 +100,14 @@ resource "azurerm_virtual_network_gateway_connection" "east2dmseeeast" {
   location            = var.azure_east.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.west2mseeeast
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.east.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_east.virtual_network_gateway_id
   authorization_key          = var.dmsee_east[0].auth_key
   express_route_circuit_id   = var.dmsee_east[0].peering_url
 }
@@ -88,8 +117,14 @@ resource "azurerm_virtual_network_gateway_connection" "east2dmseewest" {
   location            = var.azure_east.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.east2dmseeeast
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.east.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_east.virtual_network_gateway_id
   authorization_key          = var.dmsee_west[0].auth_key
   express_route_circuit_id   = var.dmsee_west[0].peering_url
 }
@@ -100,8 +135,14 @@ resource "azurerm_virtual_network_gateway_connection" "west2dmseewest" {
   location            = var.azure_west.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.east2dmseewest
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.west.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_west.virtual_network_gateway_id
   authorization_key          = var.dmsee_west[1].auth_key
   express_route_circuit_id   = var.dmsee_west[1].peering_url
 }
@@ -111,8 +152,14 @@ resource "azurerm_virtual_network_gateway_connection" "west2dmseeeast" {
   location            = var.azure_west.location
   resource_group_name = azurerm_resource_group.example.name
 
+  depends_on = [
+    azurerm_route_server.east,
+    azurerm_route_server.west,
+    azurerm_virtual_network_gateway_connection.west2dmseewest
+  ]
+
   type                       = "ExpressRoute"
-  virtual_network_gateway_id = module.west.virtual_network_gateway_id
+  virtual_network_gateway_id = module.vngw_west.virtual_network_gateway_id
   authorization_key          = var.dmsee_east[1].auth_key
   express_route_circuit_id   = var.dmsee_east[1].peering_url
 }

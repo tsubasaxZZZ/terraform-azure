@@ -236,3 +236,24 @@ module "bastion_west" {
   location            = var.azure_west.location
   subnet_id           = azurerm_subnet.west_bastion.id
 }
+
+// --- Azure VMs ---
+module "vm_windows_east" {
+  source              = "../modules/vm-windows-2019"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
+  name                = "vmeastwindows"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = var.azure_east.location
+  subnet_id           = azurerm_subnet.east_default.id
+}
+module "vm_windows_west" {
+  source              = "../modules/vm-windows-2019"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
+  name                = "vmwestwindows"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = var.azure_west.location
+  zone                = null
+  subnet_id           = azurerm_subnet.west_default.id
+}

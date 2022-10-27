@@ -32,9 +32,14 @@ resource "azurerm_public_ip" "ars_east" {
   allocation_method   = "Static"
 }
 resource "azurerm_route_server" "east" {
-  name                             = "rs-east"
-  resource_group_name              = azurerm_resource_group.example.name
-  location                         = var.azure_east.location
+  name                = "rs-east"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = var.azure_east.location
+
+  depends_on = [
+    module.vngw_east,
+  ]
+
   sku                              = "Standard"
   public_ip_address_id             = azurerm_public_ip.ars_east.id
   subnet_id                        = azurerm_subnet.east_routeserver.id
@@ -81,9 +86,14 @@ resource "azurerm_public_ip" "ars_west" {
   allocation_method   = "Static"
 }
 resource "azurerm_route_server" "west" {
-  name                             = "rs-west"
-  resource_group_name              = azurerm_resource_group.example.name
-  location                         = var.azure_west.location
+  name                = "rs-west"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = var.azure_west.location
+
+  depends_on = [
+    module.vngw_west,
+  ]
+
   sku                              = "Standard"
   public_ip_address_id             = azurerm_public_ip.ars_west.id
   subnet_id                        = azurerm_subnet.west_routeserver.id
