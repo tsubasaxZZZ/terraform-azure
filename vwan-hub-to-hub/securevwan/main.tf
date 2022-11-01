@@ -20,11 +20,15 @@ resource "azurerm_firewall_policy" "example" {
 resource "azurerm_firewall_policy_rule_collection_group" "example" {
   name               = "fw-example-rules"
   firewall_policy_id = azurerm_firewall_policy.example.id
-  priority           = 100
+  priority           = 2000
+
+  lifecycle {
+    ignore_changes = [network_rule_collection, application_rule_collection, nat_rule_collection]
+  }
 
   network_rule_collection {
     name     = "network_rules1"
-    priority = 100
+    priority = 2100
     action   = "Allow"
     rule {
       name                  = "network_rule_collection1_rule1"

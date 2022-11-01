@@ -39,6 +39,34 @@ variable "azure_east" {
   }
 }
 
+variable "azure_east_spokes" {
+  type = list(object({
+    name                  = string
+    spoke_base_cidr_block = string
+  }))
+  default = [
+    {
+      name                  = "spoke1"
+      spoke_base_cidr_block = "10.100.0.0/16"
+    },
+    {
+      name                  = "spoke2"
+      spoke_base_cidr_block = "10.101.0.0/16"
+    }
+  ]
+}
+
+variable "azure_east_shared" {
+  type = object({
+    spoke_base_cidr_block = string
+    location              = string
+  })
+  default = {
+    spoke_base_cidr_block = "10.3.0.0/16"
+    location              = "japaneast"
+  }
+}
+
 variable "azure_west" {
   type = object({
     spoke_base_cidr_block = string

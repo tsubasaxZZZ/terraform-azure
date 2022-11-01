@@ -70,11 +70,21 @@ resource "azurerm_virtual_hub_connection" "east" {
   name                      = "vhub-conn-east-west"
   virtual_hub_id            = azurerm_virtual_hub.east.id
   remote_virtual_network_id = azurerm_virtual_network.east.id
+  internet_security_enabled = true
 }
+
 resource "azurerm_virtual_hub_connection" "west" {
   name                      = "vhub-conn-west-east"
   virtual_hub_id            = azurerm_virtual_hub.west.id
   remote_virtual_network_id = azurerm_virtual_network.west.id
+  internet_security_enabled = true
+}
+
+resource "azurerm_virtual_hub_connection" "west_east_shared" {
+  name                      = "vhub-conn-west-east_shared"
+  virtual_hub_id            = azurerm_virtual_hub.west.id
+  remote_virtual_network_id = azurerm_virtual_network.east_shared.id
+  internet_security_enabled = true
 }
 
 module "securevwan_east" {
