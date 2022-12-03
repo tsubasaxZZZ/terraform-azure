@@ -147,12 +147,13 @@ resource "azurerm_bastion_host" "bastion" {
     azurerm_subnet_network_security_group_association.hub-bastion
   ]
 
-  name                = var.name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  sku                 = "Standard"
-  ip_connect_enabled  = true
-  tunneling_enabled   = true
+  name                   = var.name
+  resource_group_name    = var.resource_group_name
+  location               = var.location
+  sku                    = "Standard"
+  ip_connect_enabled     = true
+  tunneling_enabled      = true
+  shareable_link_enabled = true
 
   ip_configuration {
     name                 = "configuration"

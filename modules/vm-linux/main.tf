@@ -37,7 +37,7 @@ resource "azurerm_linux_virtual_machine" "linux" {
     username   = var.admin_username
     public_key = var.public_key
   }
-  custom_data = base64encode(var.custom_data)
+  custom_data = var.custom_data != "" ? base64encode(var.custom_data) : null
 }
 
 resource "azurerm_network_interface" "nic" {

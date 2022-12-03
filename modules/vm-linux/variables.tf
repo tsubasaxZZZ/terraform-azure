@@ -10,7 +10,9 @@ variable "vm_size" {
   default = "Standard_B2ms"
 }
 variable "subnet_id" {}
-variable "custom_data" {}
+variable "custom_data" {
+  default = ""
+}
 variable "source_address_prefix" {
   default = "*"
 }
