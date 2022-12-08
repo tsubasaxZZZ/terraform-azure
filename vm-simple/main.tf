@@ -82,8 +82,8 @@ module "windowsvm" {
 
   count = var.windows.numberOfVMs
 
-  admin_username      = "azureuser"
-  admin_password      = "Password1!"
+  admin_username      = var.windows.admin_username
+  admin_password      = var.windows.admin_password
   name                = "vmwindows-${count.index + 1}"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
@@ -92,6 +92,10 @@ module "windowsvm" {
 
 // --- Azure Bastion ---
 module "bastion_east" {
+  depends_on = [
+    module.linuxvm,
+    module.windowsvm,
+  ]
   source              = "../modules/bastion/"
   name                = "bastion"
   resource_group_name = azurerm_resource_group.example.name

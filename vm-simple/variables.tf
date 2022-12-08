@@ -10,29 +10,24 @@ variable "base_cidr_block" {
   default = "10.0.0.0/16"
 }
 
-variable "custom_data" {
-  type    = string
-  default = ""
-}
-
 variable "windows" {
   type = object({
-    numberOfVMs = number
+    numberOfVMs    = number
+    admin_username = optional(string, "azureuser")
+    admin_password = optional(string, "Password1!")
   })
   default = {
-    numberOfVMs = 1
+    numberOfVMs    = 0
   }
 }
 
 variable "linux" {
   type = object({
     numberOfVMs    = number
-    ssh_public_key = string
-    custom_data    = string
+    ssh_public_key = optional(string)
+    custom_data    = optional(string, "")
   })
   default = {
-    numberOfVMs    = 1
-    ssh_public_key = ""
-    custom_data    = ""
+    numberOfVMs = 0
   }
 }
