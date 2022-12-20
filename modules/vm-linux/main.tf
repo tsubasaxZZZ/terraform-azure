@@ -13,9 +13,13 @@ resource "azurerm_linux_virtual_machine" "linux" {
   size                = var.vm_size
   zone                = var.zone
   admin_username      = var.admin_username
+  admin_password      = "Password1!"
   availability_set_id = var.availability_set_id
+  boot_diagnostics {
+    storage_account_uri = null
+  }
 
-  disable_password_authentication = true
+  disable_password_authentication = false
 
   network_interface_ids = [
     azurerm_network_interface.nic.id
