@@ -2,6 +2,16 @@
 
 ![](./images/ss1.png)
 
+## Specification
+
+- To access the Internet, resources will pass through Azure Firewall.
+- For access between vm and vmappgw, these will be through Azure Firewall.
+
+## Post-deployment tasks
+
+- Change Azure Firewall DNAT settings
+- Approve PLS
+
 ## Installed tools for VM
 
 - nginx

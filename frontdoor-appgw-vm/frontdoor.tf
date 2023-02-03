@@ -162,6 +162,63 @@ resource "azurerm_cdn_frontdoor_route" "appgw" {
 
 }
 
+// endpoint of AzFW
+resource "azurerm_cdn_frontdoor_endpoint" "azfw" {
+  name                     = "endpoint-${random_string.uniqstr.result}-azfw"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.example.id
+}
+
+resource "azurerm_cdn_frontdoor_origin_group" "azfw" {
+  name                     = "azfw-group"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.example.id
+  session_affinity_enabled = true
+
+  restore_traffic_time_to_healed_or_new_endpoint_in_minutes = 10
+
+  health_probe {
+    interval_in_seconds = 5
+    path                = "/"
+    protocol            = "Http"
+    request_type        = "HEAD"
+  }
+
+  load_balancing {
+    additional_latency_in_milliseconds = 50
+    sample_size                        = 4
+    successful_samples_required        = 3
+  }
+}
+resource "azurerm_cdn_frontdoor_origin" "azfw" {
+  name                          = "azfw-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.azfw.id
+
+  health_probes_enabled          = true
+  certificate_name_check_enabled = true
+
+  host_name          = module.azfw.public_ip_address
+  http_port          = 80
+  https_port         = 443
+  origin_host_header = module.azfw.public_ip_address
+  priority           = 1
+  weight             = 500
+}
+resource "azurerm_cdn_frontdoor_route" "azfw" {
+  name                          = "azfw-route"
+  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.azfw.id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.azfw.id
+  cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.azfw.id]
+  cdn_frontdoor_rule_set_ids    = [azurerm_cdn_frontdoor_rule_set.example.id]
+  enabled                       = true
+
+  forwarding_protocol    = "MatchRequest"
+  https_redirect_enabled = false
+  patterns_to_match      = ["/*"]
+  supported_protocols    = ["Http", "Https"]
+
+  link_to_default_domain = true
+
+}
+
 // common resources
 resource "azurerm_cdn_frontdoor_rule_set" "example" {
   name                     = "ExampleRuleSet"
