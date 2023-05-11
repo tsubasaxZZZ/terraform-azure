@@ -117,18 +117,20 @@ variable "azurefirewall_nat_rule" {
       translated_port     = string
     }))
   }))
-  default = [{
-    action   = "Dnat"
-    name     = "TestDnatRule_SSH-SpokeVM"
-    priority = 500
-    rule = [{
-      destination_address = "20.210.58.19"
-      destination_ports   = ["22"]
-      name                = "SSH"
-      protocols           = ["TCP"]
-      source_addresses    = ["*"]
-      translated_address  = "10.101.0.4"
-      translated_port     = "22"
-    }]
-  }]
+  default = []
+  # Example:
+  # default = [{
+  #   action   = "Dnat"
+  #   name     = "TestDnatRule_SSH-SpokeVM"
+  #   priority = 500
+  #   rule = [{
+  #     destination_address = "20.210.58.19"
+  #     destination_ports   = ["22"]
+  #     name                = "SSH"
+  #     protocols           = ["TCP"]
+  #     source_addresses    = ["*"]
+  #     translated_address  = "10.101.0.4"
+  #     translated_port     = "22"
+  #   }]
+  # }]
 }
