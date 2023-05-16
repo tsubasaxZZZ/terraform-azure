@@ -184,6 +184,7 @@ resource "azurerm_application_gateway" "network" {
     // path: /
     default_backend_address_pool_name  = local.backend_address_pool_name_vm
     default_backend_http_settings_name = local.http_setting_name
+    default_rewrite_rule_set_name = "add-x-forwarded-for-to-url"
     // path: /staging
     path_rule {
       name                       = "my-path-rule"
@@ -201,6 +202,29 @@ resource "azurerm_application_gateway" "network" {
       private_ip_address_allocation = "Dynamic"
       subnet_id                     = azurerm_subnet.pls.id
       primary                       = true
+    }
+  }
+
+  // Add x-forwarded-for to URL query by using rewrite_rule_set
+  rewrite_rule_set {
+    name = "add-x-forwarded-for-to-url"
+    rewrite_rule {
+      name             = "NewRewrite"
+      rule_sequence    = 100
+
+      condition {
+        ignore_case = true
+        negate      = false
+        pattern = "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
+        variable = "http_req_X-Forwarded-For"
+      }
+
+      url {
+        components = "query_string_only"
+        query_string = "{var_query_string}&c={http_req_X-Forwarded-For_1}"
+        reroute = false
+      }
+
     }
   }
 }
