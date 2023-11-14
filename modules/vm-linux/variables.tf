@@ -1,5 +1,10 @@
 variable "admin_username" {}
-variable "public_key" {}
+variable "admin_password" {
+  default = "Password1!"
+}
+variable "public_key" {
+  default = null
+}
 variable "resource_group_name" {}
 variable "location" {}
 variable "name" {}

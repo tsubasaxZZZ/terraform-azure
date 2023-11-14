@@ -13,7 +13,7 @@ resource "azurerm_linux_virtual_machine" "linux" {
   size                = var.vm_size
   zone                = var.zone
   admin_username      = var.admin_username
-  admin_password      = "Password1!"
+  admin_password      = var.admin_password
   availability_set_id = var.availability_set_id
   boot_diagnostics {
     storage_account_uri = null
@@ -37,10 +37,15 @@ resource "azurerm_linux_virtual_machine" "linux" {
     version   = var.source_image_reference.version
   }
 
-  admin_ssh_key {
-    username   = var.admin_username
-    public_key = var.public_key
+  // Set public_key if set in "var.public_key" by using conditional dynamic block
+  dynamic "admin_ssh_key" {
+    for_each = var.public_key != null ? [1] : []
+    content {
+      username   = var.admin_username
+      public_key = var.public_key
+    }
   }
+
   custom_data = var.custom_data != "" ? base64encode(var.custom_data) : null
 }
 
