@@ -40,3 +40,8 @@ aro_cluster = {
 }
 aro_aad_sp_client_secret = "<secret>"
 ``
+
+## ドキュメント
+
+[API リファレンス - Open Shift Clusters - Create Or Update](https://learn.microsoft.com/en-us/rest/api/openshift/open-shift-clusters/create-or-update?view=rest-openshift-2023-09-04&tabs=HTTP)
+[Deploy an Azure Red Hat OpenShift cluster with Terraform and AzAPI Provider](https://learn.microsoft.com/en-us/samples/azure-samples/aro-azapi-terraform/aro-azapi-terraform/)
