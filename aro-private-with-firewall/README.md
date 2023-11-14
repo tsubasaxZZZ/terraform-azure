@@ -3,7 +3,7 @@
 Azure Redhat OpenShift を 展開する Terraform です。
 
 - 仮想ネットワーク内に ARO を展開します
-- API Server と Ingress のエンドポイントを Private にできます(既定は Public です)
+- API Server と Ingress のエンドポイントを Private にできます(既定は Private です)
 
 
 ## 事前準備
@@ -36,10 +36,7 @@ aro_cluster = {
   aad_sp_client_id      = "6e585ffb-eaae-49f6-b93a-6bd8f8dd3459"
   aad_sp_object_id      = "bba3c208-1f2c-4a4d-a921-d803efecafe9"
   rp_aad_sp_object_id   = "50c17c64-bc11-4fdd-a339-0ecd396bf221"
-  api_server_visibility = "Private"
-  ingress_visibility    = "Private"
-  worker_node_count     = 3
-  outbound_type         = "UserDefinedRouting"
+  domain                = "tsunomur1"
 }
 aro_aad_sp_client_secret = "<secret>"
 ``
