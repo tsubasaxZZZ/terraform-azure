@@ -134,3 +134,12 @@ helm install myamaext --set amalogs.secret.wsid=<Log Analytics ワークスペ�
 
 [API リファレンス - Open Shift Clusters - Create Or Update](https://learn.microsoft.com/en-us/rest/api/openshift/open-shift-clusters/create-or-update?view=rest-openshift-2023-09-04&tabs=HTTP)
 [Deploy an Azure Red Hat OpenShift cluster with Terraform and AzAPI Provider](https://learn.microsoft.com/en-us/samples/azure-samples/aro-azapi-terraform/aro-azapi-terraform/)
+
+### Azure Monitor で取得できるログ
+
+[リソースの種類別に整理された Azure Monitor ログ テーブルリファレンス](https://learn.microsoft.com/ja-jp/azure/azure-monitor/reference/tables/tables-resourcetype#azure-arc-enabled-kubernetes)
+[Container insights の監視コストについて](https://learn.microsoft.com/ja-jp/azure/azure-monitor/containers/container-insights-cost#data-collected-from-kubernetes-clusters)
+
+- ARO には AKS のように診断設定が無いのでホストの syslog 等一部のログは取得できない
+  - [Container Insights を使用した Syslog 収集 (プレビュー)](https://learn.microsoft.com/ja-jp/azure/azure-monitor/containers/container-insights-syslog)
+    - マネージド ID が必要だが ARO では Managed ID が利用できない
