@@ -199,4 +199,7 @@ module "aro" {
   api_server_visibility            = var.aro_cluster.api_server_visibility
   ingress_visibility               = var.aro_cluster.ingress_visibility
   outbound_type                    = var.aro_cluster.outbound_type
+
+  pod_cidr     = var.aro_cluster.pod_cidr
+  service_cidr = var.aro_cluster.service_cidr
 }

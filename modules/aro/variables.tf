@@ -138,6 +138,12 @@ variable "aro_cluster_aad_sp_object_id" {
   description = "The object ID of the AAD service principal for the ARO cluster."
 }
 
+variable "aro_version" {
+  type        = string
+  default     = null
+  description = "The version of the ARO cluster."
+}
+
 variable "virtual_network_id" {
   type        = string
   description = "The ID of the virtual network."

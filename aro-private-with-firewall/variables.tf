@@ -53,6 +53,10 @@ variable "aro_cluster" {
 
     domain = string
 
+    service_cidr = optional(string, "172.30.0.0/16")
+    pod_cidr     = optional(string, "10.128.0.0/14")
+
+    version = optional(string)
   })
   // check api_server_visibility and ignore ingress_visibility ether Public or Private
   validation {

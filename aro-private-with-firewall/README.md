@@ -11,13 +11,13 @@ Azure Redhat OpenShift を 展開する Terraform です。
 ### サービスプリンシパルを作る
 
 ```sh
-az ad sp create-for-rbac --name <任意の名前> > principal.json
+az ad sp create-for-rbac -o json --name <任意の名前> > principal.json
 # aad_sp_client_id の値
 aroClusterServicePrincipalClientId=$(jq -r '.appId' principal.json)
 # aad_sp_client_secret の値
 aroClusterServicePrincipalClientSecret=$(jq -r '.password' principal.json)
 # aad_sp_object_id の値
-aroClusterServicePrincipalObjectId=$(az ad sp show --id $aroClusterServicePrincipalClientId | jq -r '.id')
+aroClusterServicePrincipalObjectId=$(az ad sp show --id $aroClusterServicePrincipalClientId -o json | jq -r '.id')
 # rp_aad_sp_object_id の値
 az ad sp list --display-name "Azure Red Hat OpenShift RP" --query [0].id -o tsv
 ```
