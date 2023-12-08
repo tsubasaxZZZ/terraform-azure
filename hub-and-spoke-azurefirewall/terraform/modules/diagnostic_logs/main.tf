@@ -13,10 +13,10 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic_logs" {
       category = log.value
       enabled  = true
 
-      retention_policy {
-        enabled = true
-        days    = var.retention
-      }
+      # retention_policy {
+      #   enabled = true
+      #   days    = var.retention
+      # }
     }
   }
 
@@ -24,9 +24,9 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic_logs" {
     category = "AllMetrics"
     enabled  = false
 
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
+    # retention_policy {
+    #   days    = 0
+    #   enabled = false
+    # }
   }
 }
