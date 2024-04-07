@@ -1,15 +1,15 @@
 resource "azurerm_public_ip" "primary" {
   name                = "pip-${var.name}-primary"
-  location            = var.rg.location
-  resource_group_name = var.rg.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   sku                 = "Standard"
   allocation_method   = "Static"
 }
 
 resource "azurerm_virtual_network_gateway" "example" {
   name                = var.name
-  location            = var.rg.location
-  resource_group_name = var.rg.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
 
   type     = "ExpressRoute"
 

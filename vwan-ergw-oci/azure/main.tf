@@ -75,6 +75,9 @@ resource "azurerm_subnet" "bastion" {
 }
 
 resource "azurerm_subnet" "gateway" {
+  depends_on = [
+    azurerm_subnet.bastion
+  ]
   name                 = "GatewaySubnet"
   resource_group_name  = azurerm_resource_group.example.name
   virtual_network_name = azurerm_virtual_network.example.name
@@ -121,11 +124,12 @@ module "bastion" {
 }
 
 module "ergw" {
-  source    = "../../modules/ergateway"
-  name      = "gw-${random_string.uniqstr.result}"
-  rg        = var.rg
-  subnet_id = azurerm_subnet.gateway.id
-  depends_on = [ azurerm_resource_group.example ]
+  source                  = "../../modules/ergateway"
+  name                    = "gw-${random_string.uniqstr.result}"
+  resource_group_name     = azurerm_resource_group.example.name
+  resource_group_location = azurerm_resource_group.example.location
+  subnet_id               = azurerm_subnet.gateway.id
+  depends_on              = [azurerm_resource_group.example]
 }
 
 

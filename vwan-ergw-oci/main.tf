@@ -39,6 +39,10 @@ module "azure" {
 // -------------------------
 
 resource "oci_core_virtual_circuit" "example" {
+  depends_on = [
+    module.oci,
+    module.azure
+  ]
   #Required
   compartment_id = var.oci_configuration.compartment_id
   type           = "PRIVATE"
@@ -60,6 +64,9 @@ resource "oci_core_virtual_circuit" "example" {
 
 
 resource "azurerm_virtual_network_gateway_connection" "example" {
+  depends_on = [
+    oci_core_virtual_circuit.example
+  ]
   name                = "er-to-oci"
   location            = var.rg.location
   resource_group_name = var.rg.name
