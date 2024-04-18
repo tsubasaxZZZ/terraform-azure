@@ -124,12 +124,14 @@ module "bastion" {
 }
 
 module "ergw" {
-  source                  = "../../modules/ergateway"
-  name                    = "gw-${random_string.uniqstr.result}"
-  resource_group_name     = azurerm_resource_group.example.name
-  resource_group_location = azurerm_resource_group.example.location
-  subnet_id               = azurerm_subnet.gateway.id
-  depends_on              = [azurerm_resource_group.example]
+  source                      = "../../modules/ergateway"
+  name                        = "gw-${random_string.uniqstr.result}"
+  resource_group_name         = azurerm_resource_group.example.name
+  resource_group_location     = azurerm_resource_group.example.location
+  subnet_id                   = azurerm_subnet.gateway.id
+  remote_vnet_traffic_enabled = true
+  virtual_wan_traffic_enabled = true
+  depends_on                  = [azurerm_resource_group.example]
 }
 
 
