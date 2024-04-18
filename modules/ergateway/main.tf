@@ -16,6 +16,9 @@ resource "azurerm_virtual_network_gateway" "example" {
   active_active = false
   sku           = var.sku
 
+  remote_vnet_traffic_enabled = var.remote_vnet_traffic_enabled
+  virtual_wan_traffic_enabled = var.virtual_wan_traffic_enabled
+
   ip_configuration {
     name                 = "ErGatewayConfig-primary"
     public_ip_address_id = azurerm_public_ip.primary.id
