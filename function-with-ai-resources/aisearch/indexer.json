@@ -1,0 +1,55 @@
+{
+    "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#indexers/$entity",
+    "@odata.etag": "\"0x8DC8F98862CB0FB\"",
+    "name": "indexer1718637046443",
+    "description": null,
+    "dataSourceName": "data",
+    "skillsetName": "skillset1718635744157",
+    "targetIndexName": "azureblob-index",
+    "disabled": null,
+    "schedule": null,
+    "parameters": {
+      "batchSize": null,
+      "maxFailedItems": null,
+      "maxFailedItemsPerBatch": null,
+      "base64EncodeKeys": null,
+      "configuration": {
+        "imageAction": "generateNormalizedImages",
+        "allowSkillsetToReadFileData": true
+      }
+    },
+    "fieldMappings": [
+      {
+        "sourceFieldName": "metadata_storage_path",
+        "targetFieldName": "metadata_storage_path",
+        "mappingFunction": {
+          "name": "base64Encode",
+          "parameters": null
+        }
+      }
+    ],
+    "outputFieldMappings": [
+      {
+        "sourceFieldName": "/document/merged_content",
+        "targetFieldName": "merged_content"
+      },
+      {
+        "sourceFieldName": "/document/normalized_images/*/contentTextPremium",
+        "targetFieldName": "text"
+      },
+      {
+        "sourceFieldName": "/document/normalized_images/*/layoutText",
+        "targetFieldName": "layoutText"
+      },
+      {
+        "sourceFieldName": "/document/normalized_images/*/imageTags/*/name",
+        "targetFieldName": "imageTags"
+      },
+      {
+        "sourceFieldName": "/document/normalized_images/*/imageCaption",
+        "targetFieldName": "imageCaption"
+      }
+    ],
+    "cache": null,
+    "encryptionKey": null
+  }

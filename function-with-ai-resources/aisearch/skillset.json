@@ -1,0 +1,41 @@
+{
+    "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#skillsets/$entity",
+    "@odata.etag": "\"0x8DC8F9863ECF251\"",
+    "name": "skillset1718635744157",
+    "description": "",
+    "skills": [
+      {
+        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+        "name": "#1",
+        "description": null,
+        "context": "/document/normalized_images/*",
+        "uri": "https://func-j8o6ch.azurewebsites.net/api/AnalyzeDocument?code=ruobVDKqy5wEUZGXm6AVW9fesaEhGreseqB4nul8pvyHAzFu-_3A7w%3D%3D",
+        "httpMethod": "POST",
+        "timeout": "PT30S",
+        "batchSize": 1000,
+        "degreeOfParallelism": null,
+        "authResourceId": null,
+        "inputs": [
+          {
+            "name": "images",
+            "source": "/document/normalized_images/*"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "contentTextPremium",
+            "targetName": "contentTextPremium"
+          }
+        ],
+        "httpHeaders": {},
+        "authIdentity": null
+      }
+    ],
+    "cognitiveServices": {
+      "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices",
+      "description": null
+    },
+    "knowledgeStore": null,
+    "indexProjections": null,
+    "encryptionKey": null
+  }
