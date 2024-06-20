@@ -71,6 +71,11 @@ ConnectivityStatus    Distribution    Infrastructure    Location    Name        
 Connecting            openshift       azure             eastus      aro-ld5fzm7n  Succeeded            rg-aro-private-eastus
 ```
 
+> [!NOTE]
+> Windows で実行している場合、`An exception has occured while saving the cluster diagnostic checks pod description in the local machine. Exception: [WinError 2] The system cannot find the file specified`のようなエラーが出ることがあります。
+> 
+> その際は、`C:\Users\azureuser\.azure\kubectl-client` に `kubectl` コマンドを配置すると解消します。
+
 #### 2. Azure Arc の拡張のインストール
 
 - ドキュメント
@@ -87,7 +92,7 @@ Connecting            openshift       azure             eastus      aro-ld5fzm7n
 RESOURCEGROUP="rg-aro-private-eastus"
 CLUSTER="aro-ld5fzm7n"
 WS_RID=<Log Analytics ワークスペースの リソース ID(Workspace IDではない)>
-az k8s-extension create --name azuremonitor-containers --cluster-name $CLUSTER --resource-group $RESOURCEGROUP --cluster-type connectedClusters --extension-type Microsoft.AzureMonitor.Containers --configuration-settings amalogs.useAADAuth=false logAnalyticsWorkspaceResourceID=<Log Analytics ワークスペースの リソース ID>
+az k8s-extension create --name azuremonitor-containers --cluster-name $CLUSTER --resource-group $RESOURCEGROUP --cluster-type connectedClusters --extension-type Microsoft.AzureMonitor.Containers --configuration-settings amalogs.useAADAuth=false logAnalyticsWorkspaceResourceID=$WS_RID
 
 # 実行結果
 AutoUpgradeMinorVersion    CurrentVersion    ExtensionType                      IsSystemExtension    Name                     ProvisioningState    ReleaseTrain    ResourceGroup
