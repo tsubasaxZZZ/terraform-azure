@@ -43,12 +43,32 @@ resource "azurerm_linux_function_app" "example" {
     }
     app_service_logs {
     }
+    
+    application_insights_connection_string = azurerm_application_insights.example.connection_string
   }
 
 }
-# FunctionsのManaged Identityに対してCognitive Servicesの "Cognitive Service User" ロールを割り当てる
+# FunctionsのManaged Identityに対してDocument Intelligenceの "Cognitive Service User" ロールを割り当てる
 resource "azurerm_role_assignment" "cognitive_service_user_assignment" {
   principal_id         = azurerm_linux_function_app.example.identity[0].principal_id
   role_definition_name = "Cognitive Services User"
   scope                = azurerm_cognitive_account.documentinteligence.id
+}
+
+
+# Create App Insights with Log Analtyics
+resource "azurerm_application_insights" "example" {
+  name                = "ai-${random_string.uniqstr.result}"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.example.id
+}
+
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "la-${random_string.uniqstr.result}"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
 }

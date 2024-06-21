@@ -21,7 +21,14 @@ def main(req: HttpRequest) -> HttpResponse:
         logging.info(f"Request headers: {json.dumps(req_headers, indent=2)}")
 
         req_body = req.get_json()
-        logging.info(f"Request body: {json.dumps(req_body, indent=2)}")
+        dump_req_body = req_body.copy()
+        # Delete "data" field value from dump_req_body to avoid logging binary data
+        if dump_req_body.get("values"):
+            for record in dump_req_body.get("values"):
+                if record.get("data"):
+                    record["data"]["images"]["data"] = "binary data"
+
+        logging.info(f"Request body: {json.dumps(dump_req_body, indent=2)}")
     except ValueError:
         return HttpResponse(
             "Invalid JSON",
@@ -35,8 +42,6 @@ def main(req: HttpRequest) -> HttpResponse:
             status_code=400
         )
 
-    analyze_read()
-
     response_values = [process_record(record) for record in values]
     return HttpResponse(
         json.dumps({"values": response_values}),
@@ -49,10 +54,39 @@ def main(req: HttpRequest) -> HttpResponse:
 
 
 def process_record(record: Dict) -> Dict:
+    # {
+    #   "recordId": "3",
+    #   "data": {
+    #     "images": {
+    #       "$type": "file",
+    #       "url": null,
+    #       "data": "binary data",
+    #       "width": 929,
+    #       "height": 2000,
+    #       "originalWidth": 1895,
+    #       "originalHeight": 4077,
+    #       "rotationFromOriginal": 0,
+    #       "contentOffset": 0,
+    #       "pageNumber": 0,
+    #       "contentType": "image/jpeg"
+    #     },
+    #     "url": "https://datasaj8o6ch.blob.core.windows.net/data/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_16-6-2024_13843_console.equinix.com.jpeg"
+    #   }
+    # }
+    content = ""
+    try:
+        content = analyze_read(url=record.get("data").get("url"))
+    except Exception as e:
+        logging.error(f"Error occurred: {e}")
+        return HttpResponse(
+            "Error occurred while analyzing document" + str(e),
+            status_code=500
+        )
+
     return {
         "recordId": record.get("recordId"),
         "data": {
-            "contentTextPremium": "This is a static response from premium",
+            "contentTextPremium": "This is a static response from premium: " + content,
             "error": {}
         }
     }
@@ -62,10 +96,10 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
-def analyze_read():
+def analyze_read(url: str):
     # sample document
-    formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf"
-
+    #formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf"
+    formUrl = url
     key = os.getenv("FORM_RECOGNIZER_KEY")
     if key:
         credential = AzureKeyCredential(key)
@@ -76,6 +110,7 @@ def analyze_read():
             endpoint=endpoint, credential=credential
     )
     
+    logging.info(f"formURL: {formUrl}")
     poller = document_analysis_client.begin_analyze_document_from_url(
             "prebuilt-read", formUrl)
     result = poller.result()
@@ -112,5 +147,5 @@ def analyze_read():
                     word.content, word.confidence
                 )
             )
-
     print("----------------------------------------")
+    return result.content
