@@ -9,7 +9,7 @@ AI 関連のリソースを展開する Terraform です。
 ## MyFunctionProj
 AI Search から呼び出される Azure Functions のアプリケーションが含まれています。
 
-`endpoint` には、Document Intelligence のエンドポイントを指定してください。
+`AnalyzeDocument` の `__init__.py` の `endpoint` には、Document Intelligence のエンドポイントを指定してください。
 
 ## aisearch
 AI Search のインデックス、インデクサー、スキルセットの JSON が含まれています。
