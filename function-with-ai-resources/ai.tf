@@ -1,13 +1,13 @@
 
 # Document Intelligence
 resource "azurerm_cognitive_account" "documentinteligence" {
-  name                = "di-example"
+  name                = "di-${random_string.uniqstr.result}-1"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
   kind                = "FormRecognizer"
   sku_name            = "S0"
 
-  custom_subdomain_name = "di${random_string.uniqstr.result}"
+  custom_subdomain_name = "di${random_string.uniqstr.result}-1"
 
   identity {
     type = "SystemAssigned"
@@ -18,6 +18,7 @@ resource "azurerm_cognitive_account" "documentinteligence" {
     ip_rules       = []
   }
 
+  local_auth_enabled = false
 }
 
 # Azure AI Search

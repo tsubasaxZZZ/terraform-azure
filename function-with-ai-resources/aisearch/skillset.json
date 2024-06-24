@@ -1,41 +1,151 @@
 {
-    "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#skillsets/$entity",
-    "@odata.etag": "\"0x8DC8F9863ECF251\"",
-    "name": "skillset1718635744157",
-    "description": "",
-    "skills": [
-      {
-        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
-        "name": "#1",
-        "description": null,
-        "context": "/document/normalized_images/*",
-        "uri": "https://func-j8o6ch.azurewebsites.net/api/AnalyzeDocument?code=ruobVDKqy5wEUZGXm6AVW9fesaEhGreseqB4nul8pvyHAzFu-_3A7w%3D%3D",
-        "httpMethod": "POST",
-        "timeout": "PT30S",
-        "batchSize": 1000,
-        "degreeOfParallelism": null,
-        "authResourceId": null,
-        "inputs": [
-          {
-            "name": "images",
-            "source": "/document/normalized_images/*"
-          }
-        ],
-        "outputs": [
-          {
-            "name": "contentTextPremium",
-            "targetName": "contentTextPremium"
-          }
-        ],
-        "httpHeaders": {},
-        "authIdentity": null
-      }
-    ],
-    "cognitiveServices": {
-      "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices",
-      "description": null
+  "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#skillsets/$entity",
+  "@odata.etag": "\"0x8DC923DBAA7892B\"",
+  "name": "skillset1718635744157",
+  "description": "",
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.MergeSkill",
+      "name": "#1",
+      "description": null,
+      "context": "/document",
+      "insertPreTag": " ",
+      "insertPostTag": " ",
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/content"
+        },
+        {
+          "name": "itemsToInsert",
+          "source": "/document/normalized_images/*/text"
+        },
+        {
+          "name": "offsets",
+          "source": "/document/normalized_images/*/contentOffset"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mergedText",
+          "targetName": "merged_content"
+        }
+      ]
     },
-    "knowledgeStore": null,
-    "indexProjections": null,
-    "encryptionKey": null
-  }
+    {
+      "@odata.type": "#Microsoft.Skills.Vision.OcrSkill",
+      "name": "#2",
+      "description": null,
+      "context": "/document/normalized_images/*",
+      "textExtractionAlgorithm": null,
+      "lineEnding": "Space",
+      "defaultLanguageCode": "en",
+      "detectOrientation": true,
+      "inputs": [
+        {
+          "name": "image",
+          "source": "/document/normalized_images/*"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "targetName": "text"
+        },
+        {
+          "name": "layoutText",
+          "targetName": "layoutText"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Vision.ImageAnalysisSkill",
+      "name": "#3",
+      "description": null,
+      "context": "/document/normalized_images/*",
+      "defaultLanguageCode": "en",
+      "visualFeatures": [
+        "tags",
+        "description"
+      ],
+      "details": [],
+      "inputs": [
+        {
+          "name": "image",
+          "source": "/document/normalized_images/*"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "tags",
+          "targetName": "imageTags"
+        },
+        {
+          "name": "description",
+          "targetName": "imageCaption"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+      "name": "#4",
+      "description": null,
+      "context": "/document/normalized_images/*",
+      "uri": "https://func-j8o6ch.azurewebsites.net/api/AnalyzeDocument?code=ruobVDKqy5wEUZGXm6AVW9fesaEhGreseqB4nul8pvyHAzFu-_3A7w%3D%3D",
+      "httpMethod": "POST",
+      "timeout": "PT30S",
+      "batchSize": 1000,
+      "degreeOfParallelism": null,
+      "authResourceId": null,
+      "inputs": [
+        {
+          "name": "images",
+          "source": "/document/normalized_images/*"
+        },
+        {
+          "name": "url",
+          "source": "/document/data_path"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "contentTextPremium",
+          "targetName": "contentTextPremium"
+        }
+      ],
+      "httpHeaders": {},
+      "authIdentity": null
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill",
+      "name": "#5",
+      "description": "Connects a deployed embedding model.",
+      "context": "/document",
+      "resourceUri": "https://aoaij8o6ch.openai.azure.com",
+      "apiKey": null,
+      "deploymentId": "my-text-embedding-ada-002-model",
+      "dimensions": 1536,
+      "modelName": "text-embedding-ada-002",
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/merged_content"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "embedding",
+          "targetName": "embedding"
+        }
+      ],
+      "authIdentity": null
+    }
+  ],
+  "cognitiveServices": {
+    "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices",
+    "description": null
+  },
+  "knowledgeStore": null,
+  "indexProjections": null,
+  "encryptionKey": null
+}

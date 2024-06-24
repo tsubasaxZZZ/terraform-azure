@@ -1,5 +1,9 @@
 provider "azurerm" {
-  features {}
+  features {
+    cognitive_account {
+      purge_soft_delete_on_destroy = false
+    }
+  }
 }
 
 resource "random_string" "uniqstr" {
