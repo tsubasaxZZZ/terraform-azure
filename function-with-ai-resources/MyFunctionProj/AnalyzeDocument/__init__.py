@@ -9,7 +9,7 @@ from azure.identity import DefaultAzureCredential
 from typing import List, Dict
 
 
-endpoint = "https://dij8o6ch1.cognitiveservices.azure.com/"
+endpoint = os.getenv("DOCUMENT_INTELLIGENCE_ENDPOINT")
 
 def main(req: HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')

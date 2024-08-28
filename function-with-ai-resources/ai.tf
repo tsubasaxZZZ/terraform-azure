@@ -1,11 +1,12 @@
 
 # Document Intelligence
 resource "azurerm_cognitive_account" "documentinteligence" {
-  name                = "di-${random_string.uniqstr.result}-1"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  kind                = "FormRecognizer"
-  sku_name            = "S0"
+  name                       = "di-${random_string.uniqstr.result}-1"
+  resource_group_name        = azurerm_resource_group.example.name
+  location                   = "eastus" //azurerm_resource_group.example.location
+  kind                       = "FormRecognizer"
+  sku_name                   = "S0"
+  dynamic_throttling_enabled = true
 
   custom_subdomain_name = "di${random_string.uniqstr.result}-1"
 
@@ -26,7 +27,7 @@ resource "azurerm_search_service" "example" {
   name                = "aisearch-${random_string.uniqstr.result}"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-  sku                 = "standard"
+  sku                 = "basic"
 
   local_authentication_enabled = true
   authentication_failure_mode  = "http403"
@@ -89,6 +90,22 @@ resource "azurerm_cognitive_account" "openai" {
   network_acls {
     default_action = "Deny"
     ip_rules       = []
+  }
+}
+
+resource "azurerm_cognitive_deployment" "example" {
+  name                   = "my-text-embedding-ada-002-model"
+  cognitive_account_id   = azurerm_cognitive_account.openai.id
+  rai_policy_name        = "Microsoft.DefaultV2"
+  version_upgrade_option = "OnceNewDefaultVersionAvailable"
+  model {
+    format = "OpenAI"
+    name   = "text-embedding-ada-002"
+  }
+
+  scale {
+    type     = "Standard"
+    capacity = 120
   }
 }
 

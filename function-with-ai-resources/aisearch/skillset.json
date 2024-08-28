@@ -1,7 +1,4 @@
 {
-  "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#skillsets/$entity",
-  "@odata.etag": "\"0x8DC923DBAA7892B\"",
-  "name": "skillset1718635744157",
   "description": "",
   "skills": [
     {
@@ -91,12 +88,12 @@
       "name": "#4",
       "description": null,
       "context": "/document/normalized_images/*",
-      "uri": "https://func-j8o6ch.azurewebsites.net/api/AnalyzeDocument?code=ruobVDKqy5wEUZGXm6AVW9fesaEhGreseqB4nul8pvyHAzFu-_3A7w%3D%3D",
+      "uri": "${function_endpoint}",
       "httpMethod": "POST",
-      "timeout": "PT30S",
+      "timeout": "PT230S",
       "batchSize": 1000,
-      "degreeOfParallelism": null,
-      "authResourceId": null,
+      "degreeOfParallelism": 1,
+      "authResourceId": "",
       "inputs": [
         {
           "name": "images",
@@ -121,7 +118,7 @@
       "name": "#5",
       "description": "Connects a deployed embedding model.",
       "context": "/document",
-      "resourceUri": "https://aoaij8o6ch.openai.azure.com",
+      "resourceUri": "${aoai_endpoint_url}",
       "apiKey": null,
       "deploymentId": "my-text-embedding-ada-002-model",
       "dimensions": 1536,

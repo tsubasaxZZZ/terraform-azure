@@ -1,0 +1,16 @@
+GET https://func-ivdujs.azurewebsites.net/api/AnalyzeDocument?code=DJG-JmfK6HNWpVY_7Xbhuj0yB261MsbHUlHblVGHBXkIAzFupu30nQ%3D%3D
+
+{
+    "values": [
+        {
+            "data": {
+                "extractedText": "hogehoge",
+                "images": {
+                    "data": ""
+                },
+                "url": "https://www.kansaigaidai.ac.jp/asp/img/pdf/82/7a79c35f7ce0704dec63be82440c8182.pdf"
+            },
+            "recordId": "0"
+        }
+    ]
+}

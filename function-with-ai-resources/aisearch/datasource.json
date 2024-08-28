@@ -1,0 +1,9 @@
+{
+  "type": "azureblob",
+  "credentials": {
+    "connectionString": "ResourceId=${storage_account_resource_id};"
+  },
+  "container": {
+    "name": "${container_name}"
+  }
+}

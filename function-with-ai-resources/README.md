@@ -7,7 +7,10 @@ AI 関連のリソースを展開する Terraform です。
     - 各リソースのManaged IDを有効にします
     - アクセス先にアクセス元のManaged IDを割り当てます
     - ネットワークを特定のネットワークからのアクセスのみとし、"信頼された Azure サービスにアクセスを許可" を有効にします
-- Azure Functions のアプリケーションの展開と、AI Search のインデックスやスキルセットはリソース展開後に手動で設定する必要があります。
+- Terraform で展開後追加で以下を展開する必要があります。
+    - Azure Functions のアプリケーションの展開
+    - AI Search のインデックスやスキルセット
+    - Open AI のモデルのデプロイ
 
 ## Azure Functions のアプリ
 AI Search から呼び出される Azure Functions のアプリケーションが含まれています。

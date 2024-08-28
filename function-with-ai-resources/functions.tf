@@ -19,7 +19,7 @@ resource "azurerm_service_plan" "example" {
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   os_type             = "Linux"
-  sku_name            = "P1v2"
+  sku_name            = "P3v2"
 }
 
 resource "azurerm_linux_function_app" "example" {
@@ -43,8 +43,13 @@ resource "azurerm_linux_function_app" "example" {
     }
     app_service_logs {
     }
-    
+
     application_insights_connection_string = azurerm_application_insights.example.connection_string
+
+    //use_32_bit_worker = true
+  }
+  app_settings = {
+    "DOCUMENT_INTELLIGENCE_ENDPOINT" = azurerm_cognitive_account.documentinteligence.endpoint
   }
 
 }
@@ -71,4 +76,22 @@ resource "azurerm_log_analytics_workspace" "example" {
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
+}
+
+
+// Deploy function code by using func command
+resource "null_resource" "deploy_function_code" {
+  depends_on = [
+    azurerm_linux_function_app.example
+  ]
+  triggers = {
+    //always_run = timestamp()
+    file_changed = md5(file("${path.module}/MyFunctionProj/AnalyzeDocument/__init__.py"))
+  }
+  provisioner "local-exec" {
+    command = <<-EOT
+      cd MyFunctionProj
+      func azure functionapp publish ${azurerm_linux_function_app.example.name}
+    EOT
+  }
 }

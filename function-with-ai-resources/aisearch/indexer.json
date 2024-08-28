@@ -1,20 +1,14 @@
 {
-  "@odata.context": "https://aisearch-j8o6ch.search.windows.net/$metadata#indexers/$entity",
-  "@odata.etag": "\"0x8DC9428EB98A18B\"",
-  "name": "indexer1718637046443",
-  "description": null,
-  "dataSourceName": "data2",
-  "skillsetName": "skillset1718635744157",
-  "targetIndexName": "azureblob-index",
-  "disabled": null,
-  "schedule": null,
+  "dataSourceName": "${datasource_name}",
+  "skillsetName": "${skillset_name}",
+  "targetIndexName": "${index_name}",
   "parameters": {
     "batchSize": null,
     "maxFailedItems": null,
     "maxFailedItemsPerBatch": null,
     "base64EncodeKeys": null,
     "configuration": {
-      "imageAction": "generateNormalizedImages",
+      "imageAction": "generateNormalizedImagePerPage",
       "allowSkillsetToReadFileData": true
     }
   },
@@ -62,7 +56,5 @@
       "sourceFieldName": "/document/embedding",
       "targetFieldName": "embedding"
     }
-  ],
-  "cache": null,
-  "encryptionKey": null
+  ]
 }
