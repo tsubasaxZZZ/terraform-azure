@@ -33,9 +33,9 @@ variable "azure_east" {
     vwan_address_prefix   = string
   })
   default = {
-    spoke_base_cidr_block = "10.2.0.0/16"
+    spoke_base_cidr_block = "172.17.0.0/16"
     location              = "japaneast"
-    vwan_address_prefix   = "10.1.0.0/16"
+    vwan_address_prefix   = "172.16.0.0/16"
   }
 }
 
@@ -47,11 +47,11 @@ variable "azure_east_spokes" {
   default = [
     {
       name                  = "spoke1"
-      spoke_base_cidr_block = "10.100.0.0/16"
+      spoke_base_cidr_block = "172.18.0.0/16"
     },
     {
       name                  = "spoke2"
-      spoke_base_cidr_block = "10.101.0.0/16"
+      spoke_base_cidr_block = "172.19.0.0/16"
     }
   ]
 }
@@ -62,7 +62,7 @@ variable "azure_east_shared" {
     location              = string
   })
   default = {
-    spoke_base_cidr_block = "10.3.0.0/16"
+    spoke_base_cidr_block = "172.20.0.0/16"
     location              = "japaneast"
   }
 }
@@ -74,8 +74,8 @@ variable "azure_west" {
     vwan_address_prefix   = string
   })
   default = {
-    spoke_base_cidr_block = "10.20.0.0/16"
+    spoke_base_cidr_block = "172.21.0.0/16"
     location              = "japanwest"
-    vwan_address_prefix   = "10.10.0.0/16"
+    vwan_address_prefix   = "172.22.0.0/16"
   }
 }

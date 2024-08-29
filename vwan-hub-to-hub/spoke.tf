@@ -85,6 +85,7 @@ module "azfw_east" {
   }
   id        = "east-spoke"
   subnet_id = azurerm_subnet.east_azfw.id
+  zones = []
 }
 // ----------------------------------------
 // East spoke Network

@@ -6,7 +6,7 @@ module "diag_azfw_example" {
   name                       = "diag"
   target_resource_id         = azurerm_firewall.example.id
   log_analytics_workspace_id = var.log_analytics_id
-  diagnostic_logs            = data.azurerm_monitor_diagnostic_categories.azfw-diag-categories.logs
+  diagnostic_logs            = data.azurerm_monitor_diagnostic_categories.azfw-diag-categories.log_category_types
   retention                  = 30
 }
 
