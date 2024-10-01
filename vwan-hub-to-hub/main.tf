@@ -51,6 +51,11 @@ resource "azurerm_virtual_wan" "example" {
 
 }
 # Virtual WAN Hubs
+
+//////////////////////////////
+# Japan East
+//////////////////////////////
+
 resource "azurerm_virtual_hub" "east" {
   name                = "vhub-east"
   resource_group_name = azurerm_resource_group.example.name
@@ -58,6 +63,19 @@ resource "azurerm_virtual_hub" "east" {
   virtual_wan_id      = azurerm_virtual_wan.example.id
   address_prefix      = var.azure_east.vwan_address_prefix
 }
+
+resource "azurerm_express_route_gateway" "east" {
+  count = var.azure_east.deploy_er_gateway ? 1 : 0
+
+  name                = "erg-east"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_virtual_hub.east.location
+  virtual_hub_id      = azurerm_virtual_hub.east.id
+  scale_units         = 1
+}
+//////////////////////////////
+# Japan West
+//////////////////////////////
 resource "azurerm_virtual_hub" "west" {
   name                = "vhub-west"
   resource_group_name = azurerm_resource_group.example.name
@@ -65,6 +83,16 @@ resource "azurerm_virtual_hub" "west" {
   virtual_wan_id      = azurerm_virtual_wan.example.id
   address_prefix      = var.azure_west.vwan_address_prefix
 }
+
+resource "azurerm_vpn_gateway" "west" {
+  count               = var.azure_west.deploy_vpn_gateway ? 1 : 0
+  name                = "vpngw-west"
+  location            = azurerm_virtual_hub.west.location
+  resource_group_name = azurerm_resource_group.example.name
+  virtual_hub_id      = azurerm_virtual_hub.west.id
+}
+
+//////////////////////////////
 
 resource "azurerm_virtual_hub_connection" "east" {
   name                      = "vhub-conn-east-west"
@@ -106,3 +134,41 @@ module "securevwan_west" {
   id                  = "west"
   virtual_hub_id      = azurerm_virtual_hub.west.id
 }
+
+resource "azurerm_virtual_hub_routing_intent" "example" {
+  name           = "hubRoutingIntent"
+  virtual_hub_id = azurerm_virtual_hub.east.id
+
+  routing_policy {
+    name         = "PublicTraffic"
+    destinations = ["Internet"]
+    next_hop     = module.securevwan_east[0].id
+  }
+
+  routing_policy {
+    name         = "PrivateTraffic"
+    destinations = ["PrivateTraffic"]
+    next_hop     = module.securevwan_east[0].id
+  }
+}
+
+
+# resource "azurerm_virtual_hub_route_table" "default" {
+#   name           = "defaultRouteTable"
+#   virtual_hub_id = azurerm_virtual_hub.east.id
+#   labels         = ["default"]
+
+#   route {
+#     name              = "_policy_InternetTrafficPolicy"
+#     destinations_type = "CIDR"
+#     destinations      = ["0.0.0.0/0"]
+#     next_hop_type     = "ResourceId"
+#     next_hop          = module.securevwan_east[0].id
+#   }
+# }
+
+# resource "azurerm_virtual_hub_route_table" "none" {
+#   name           = "noneRouteTable"
+#   virtual_hub_id = azurerm_virtual_hub.east.id
+#   labels         = ["none"]
+# }

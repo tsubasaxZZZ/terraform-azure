@@ -28,16 +28,16 @@ variable "enable_secure_vwan" {
 
 variable "azure_east" {
   type = object({
-    spoke_base_cidr_block = string
-    location              = string
-    vwan_address_prefix   = string
+    spoke_base_cidr_block = optional(string, "172.17.0.0/16")
+    location              = optional(string, "japaneast")
+    vwan_address_prefix   = optional(string, "172.16.0.0/16")
+    deploy_er_gateway     = optional(bool, false)
   })
   default = {
-    spoke_base_cidr_block = "172.17.0.0/16"
-    location              = "japaneast"
-    vwan_address_prefix   = "172.16.0.0/16"
+
   }
 }
+
 
 variable "azure_east_spokes" {
   type = list(object({
@@ -69,13 +69,10 @@ variable "azure_east_shared" {
 
 variable "azure_west" {
   type = object({
-    spoke_base_cidr_block = string
-    location              = string
-    vwan_address_prefix   = string
+    spoke_base_cidr_block = optional(string, "172.21.0.0/16")
+    location              = optional(string, "japanwest")
+    vwan_address_prefix   = optional(string, "172.22.0.0/16")
+    deploy_vpn_gateway    = optional(bool, false)
   })
-  default = {
-    spoke_base_cidr_block = "172.21.0.0/16"
-    location              = "japanwest"
-    vwan_address_prefix   = "172.22.0.0/16"
-  }
+  default = {}
 }

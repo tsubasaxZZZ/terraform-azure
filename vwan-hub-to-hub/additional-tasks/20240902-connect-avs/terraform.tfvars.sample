@@ -1,0 +1,27 @@
+rg = {
+  location = "japaneast"
+  name     = "rg-vwan-0829"
+}
+
+vwan_id = "/subscriptions/xxxxxxxxxxxxx/resourceGroups/rg-vwan-0829/providers/Microsoft.Network/virtualWans/vwan-east"
+
+vpn_site = {
+  device_vendor = "YAMAHA"
+  link = {
+    name = "nomupro"
+    bgp = {
+      asn             = 65050
+      peering_address = "192.168.1.1"
+    }
+    provider_name = "en_Hikari"
+    ip_address    = "210.165.210.220"
+  }
+}
+
+vpn_gateway_id = "/subscriptions/xxxxxxxxxxxxx/resourceGroups/rg-vwan-0829/providers/Microsoft.Network/vpnGateways/vpngw-west"
+express_route_connection = {
+  name                             = "example-expressrouteconn"
+  express_route_gateway_id         = "/subscriptions/xxxxxxxxxxxxx/resourceGroups/rg-vwan-0829/providers/Microsoft.Network/expressRouteGateways/erg-east"
+  express_route_circuit_peering_id = "/subscriptions/xxxxxxxxxxxxx/resourceGroups/tnt83-cust-p01-southeastasia/providers/Microsoft.Network/expressRouteCircuits/tnt83-cust-p01-southeastasia-er/peerings/AzurePrivatePeering"
+  authorization_key                = "<authorization-key>"
+}
