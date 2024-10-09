@@ -17,6 +17,10 @@ resource "azurerm_firewall_policy" "example" {
   location            = var.rg.location
   resource_group_name = var.rg.name
   sku                 = var.sku
+  dns {
+    proxy_enabled = var.proxy_enabled
+    servers       = var.dns_servers
+  }
 }
 
 resource "azurerm_firewall" "example" {

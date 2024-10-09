@@ -6,7 +6,6 @@ variable "rg" {
 }
 variable "id" {
   type    = string
-  default = "dev"
 }
 
 variable "name" {
@@ -138,4 +137,13 @@ variable "azurefirewall_nat_rule" {
       translated_port     = "22"
     }]
   }]
+}
+
+variable "proxy_enabled" {
+  type    = bool
+  default = false  
+}
+variable "dns_servers" {
+  type = list(string)
+  default = []  
 }
